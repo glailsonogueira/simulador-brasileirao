@@ -19,14 +19,10 @@ clubs_data = [
   { name: 'Botafogo', abbreviation: 'BOT', primary_color: '#000000', special_club: false },
   { name: 'Chapecoense', abbreviation: 'CHA', primary_color: '#008000', special_club: false },
   { name: 'Corinthians', abbreviation: 'COR', primary_color: '#000000', special_club: false },
-  { name: 'Coritiba', abbreviation: 'COT', primary_color: '#00FF00', special_club: false },
-  { name: 'Criciúma', abbreviation: 'CRI', primary_color: '#FFFF00', special_club: false },
+  { name: 'Coritiba', abbreviation: 'CFC', primary_color: '#00FF00', special_club: false },
   { name: 'Cruzeiro', abbreviation: 'CRU', primary_color: '#0000FF', special_club: false },
-  { name: 'Cuiabá', abbreviation: 'CUI', primary_color: '#FFD700', special_club: false },
   { name: 'Flamengo', abbreviation: 'FLA', primary_color: '#FF0000', special_club: false },
   { name: 'Fluminense', abbreviation: 'FLU', primary_color: '#8B0000', special_club: false },
-  { name: 'Fortaleza', abbreviation: 'FOR', primary_color: '#FF0000', special_club: false },
-  { name: 'Goiás', abbreviation: 'GOI', primary_color: '#008000', special_club: false },
   { name: 'Grêmio', abbreviation: 'GRE', primary_color: '#0000FF', special_club: false },
   { name: 'Internacional', abbreviation: 'INT', primary_color: '#FF0000', special_club: false },
   { name: 'Juventude', abbreviation: 'JUV', primary_color: '#008000', special_club: false },
@@ -36,12 +32,8 @@ clubs_data = [
   { name: 'Remo', abbreviation: 'REM', primary_color: '#0000FF', special_club: true },
   { name: 'Santos', abbreviation: 'SAN', primary_color: '#FFFFFF', special_club: false },
   { name: 'São Paulo', abbreviation: 'SAO', primary_color: '#FF0000', special_club: false },
-  { name: 'Sport', abbreviation: 'SPO', primary_color: '#FF0000', special_club: false },
   { name: 'Vasco da Gama', abbreviation: 'VAS', primary_color: '#000000', special_club: false },
-  { name: 'Vitória', abbreviation: 'VIT', primary_color: '#FF0000', special_club: false },
-  { name: 'Atlético Goianiense', abbreviation: 'ACG', primary_color: '#FF0000', special_club: false },
-  { name: 'América Mineiro', abbreviation: 'AME', primary_color: '#008000', special_club: false },
-  { name: 'Ceará', abbreviation: 'CEA', primary_color: '#000000', special_club: false }
+  { name: 'Vitória', abbreviation: 'VIT', primary_color: '#FF0000', special_club: false }
 ]
 
 clubs_data.each { |c| Club.create!(c) }
@@ -51,8 +43,8 @@ championship_2026 = Championship.create!(
   year: 2026,
   name: 'Brasileirão Série A',
   active: false,
-  start_date: Date.new(2026, 4, 10),
-  end_date: Date.new(2026, 12, 5)
+  start_date: Date.new(2026, 1, 28),
+  end_date: Date.new(2026, 12, 2)
 )
 
 clubs_serie_a = [
