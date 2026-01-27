@@ -8,8 +8,13 @@ class SessionsController < ApplicationController
     user = User.find_by(email: params[:email])
     
     if user && user.authenticate(params[:password])
-      session[:user_id] = user.id
-      redirect_to root_path, notice: 'Login realizado com sucesso!'
+      if user.active?
+        session[:user_id] = user.id
+        redirect_to root_path, notice: 'Login realizado com sucesso!'
+      else
+        flash.now[:alert] = 'Sua conta está desativada. Entre em contato com o administrador.'
+        render :new, status: :unprocessable_entity
+      end
     else
       flash.now[:alert] = 'Email ou senha inválidos'
       render :new, status: :unprocessable_entity

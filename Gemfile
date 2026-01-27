@@ -53,3 +53,6 @@ end
 gem "bcrypt", "~> 3.1.7"
 gem "omniauth-google-oauth2", "~> 1.1"
 gem "omniauth-rails_csrf_protection", "~> 1.0"
+
+# Variáveis de ambiente
+gem 'dotenv-rails', groups: [:development, :test]

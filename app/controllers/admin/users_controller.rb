@@ -1,6 +1,6 @@
 class Admin::UsersController < ApplicationController
   before_action :require_admin
-  before_action :set_user, only: [:show, :toggle_admin]
+  before_action :set_user, only: [:show, :toggle_admin, :toggle_active]
   
   def index
     @users = User.order(:name)
@@ -12,6 +12,11 @@ class Admin::UsersController < ApplicationController
   def toggle_admin
     @user.update(admin: !@user.admin?)
     redirect_to admin_users_path, notice: "#{@user.name} #{@user.admin? ? 'agora é admin' : 'não é mais admin'}!"
+  end
+  
+  def toggle_active
+    @user.update(active: !@user.active?)
+    redirect_to admin_users_path, notice: "#{@user.name} foi #{@user.active? ? 'ativado' : 'desativado'}!"
   end
   
   private

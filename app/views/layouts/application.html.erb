@@ -2,9 +2,8 @@
 <html>
   <head>
     <title><%= content_for?(:title) ? yield(:title) + " - " : "" %>Simulações do Brasileirão by Renegados Azulinos</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="icon" type="image/png" href="/favicon.png">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" type="image/png" href="/favicon.png">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
@@ -17,6 +16,22 @@
       nav .container { display: flex; justify-content: space-between; align-items: center; }
       nav a { color: white; text-decoration: none; margin: 0 15px; }
       nav a:hover { text-decoration: underline; }
+      
+      /* Logout Icon */
+      .logout-icon { 
+        display: inline-block;
+        margin-left: 15px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      .logout-icon:hover { 
+        transform: scale(1.1);
+      }
+      .logout-icon img {
+        width: 36px;
+        height: 36px;
+        vertical-align: middle;
+      }
       
       /* Dropdown Menu */
       .dropdown { position: relative; display: inline-block; }
@@ -85,7 +100,10 @@
             <% end %>
             
             <span style="margin: 0 15px;"><%= current_user.name %></span>
-            <%= link_to "Sair", logout_path, data: { turbo_method: :delete } %>
+            
+            <%= link_to logout_path, method: :delete, data: { turbo_method: :delete }, class: "logout-icon", title: "Sair" do %>
+              <img src="/logout-icon.png" alt="Sair">
+            <% end %>
           <% else %>
             <%= link_to "Login", login_path %>
             <%= link_to "Cadastro", signup_path %>

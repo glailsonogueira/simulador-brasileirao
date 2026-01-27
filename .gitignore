@@ -26,3 +26,8 @@ node_modules/
 # Ignorar arquivos do sistema
 .DS_Store
 Thumbs.db
+
+# Variáveis de ambiente
+.env
+.env.*
+!.env.example
