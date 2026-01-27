@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+  username: vagrant
+  password: vagrant
+  host: localhost
+
+development:
+  <<: *default
+  database: ra_brasileirao_simulador_development
+
+test:
+  <<: *default
+  database: ra_brasileirao_simulador_test
+
+production:
+  <<: *default
+  database: ra_brasileirao_simulador_production

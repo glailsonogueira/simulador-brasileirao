@@ -1,0 +1,52 @@
+<%= form_with model: [:admin, championship], local: true do |f| %>
+  <% if championship.errors.any? %>
+    <div class="errors">
+      <h3><%= pluralize(championship.errors.count, "erro") %>:</h3>
+      <ul>
+        <% championship.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :year, 'Ano do Campeonato' %>
+    <%= f.number_field :year, 
+                       class: 'form-control', 
+                       required: true,
+                       min: 2000,
+                       max: 2100,
+                       placeholder: '2026' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :name, 'Nome do Campeonato' %>
+    <%= f.text_field :name, 
+                     class: 'form-control', 
+                     required: true,
+                     placeholder: 'Brasileirão Série A' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :start_date, 'Data de Início (opcional)' %>
+    <%= f.date_field :start_date, class: 'form-control' %>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :end_date, 'Data de Término (opcional)' %>
+    <%= f.date_field :end_date, class: 'form-control' %>
+  </div>
+
+  <div class="form-group form-check">
+    <%= f.check_box :active, class: 'form-check-input' %>
+    <%= f.label :active, 'Campeonato Ativo', class: 'form-check-label' %>
+    <small class="form-text d-block">Apenas um campeonato pode estar ativo por vez</small>
+  </div>
+
+  <div class="form-actions">
+    <%= f.submit championship.new_record? ? 'Criar Campeonato' : 'Atualizar Campeonato', 
+                 class: 'btn btn-primary' %>
+    <%= link_to 'Cancelar', admin_championships_path, class: 'btn btn-secondary' %>
+  </div>
+<% end %>

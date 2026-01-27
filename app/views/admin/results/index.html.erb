@@ -1,0 +1,48 @@
+<h1>Resultados - Rodada <%= @round.number %></h1>
+
+<%= link_to "← Voltar", admin_championship_path(@round.championship), class: "btn", style: "margin-bottom: 20px;" %>
+<%= button_to "Recalcular Pontuações", recalculate_admin_round_results_path(@round), method: :post, class: "btn", style: "margin-bottom: 20px; background: #ffc107;" %>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Data/Hora</th>
+        <th>Mandante</th>
+        <th>Placar</th>
+        <th>Visitante</th>
+        <th>Status</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @matches.each do |match| %>
+        <tr>
+          <td><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
+          <td><%= match.home_club.name %></td>
+          <td style="text-align: center;">
+            <%= form_with model: match, url: admin_round_result_path(@round, match), method: :patch, local: true, style: "display: inline;" do |f| %>
+              <%= f.number_field :home_score, value: match.home_score, min: 0, max: 20, style: "width: 50px; text-align: center;" %>
+              x
+              <%= f.number_field :away_score, value: match.away_score, min: 0, max: 20, style: "width: 50px; text-align: center;" %>
+              <%= f.check_box :finished, style: "margin-left: 10px;" %>
+              <%= f.label :finished, "Finalizado", style: "margin-left: 5px;" %>
+              <%= f.submit "Salvar", class: "btn", style: "padding: 5px 10px; font-size: 12px; margin-left: 10px;" %>
+            <% end %>
+          </td>
+          <td><%= match.away_club.name %></td>
+          <td>
+            <% if match.finished? %>
+              <span style="color: green;">✓ Finalizado</span>
+            <% else %>
+              <span style="color: #999;">Pendente</span>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to "Editar", edit_admin_round_match_path(@round, match), class: "btn", style: "padding: 5px 10px; font-size: 12px;" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

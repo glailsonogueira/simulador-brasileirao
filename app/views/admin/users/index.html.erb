@@ -1,0 +1,66 @@
+<% content_for :title, "Usuários" %>
+<%= breadcrumb ["Início", root_path], ["Admin", admin_championships_path], "Usuários" %>
+
+<h1>Admin - Usuários</h1>
+
+<%= link_to "← Voltar", admin_championships_path, class: "btn", style: "margin-bottom: 20px;" %>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Tipo de Login</th>
+        <th>Admin</th>
+        <th>Cadastro</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td>
+            <%= user.name %>
+            <% if user.avatar_url.present? %>
+              <%= image_tag user.avatar_url, style: "width: 30px; height: 30px; border-radius: 50%; margin-left: 10px; vertical-align: middle;" %>
+            <% end %>
+          </td>
+          <td><%= user.email %></td>
+          <td>
+            <% if user.provider.present? %>
+              <span style="color: #db4437;">Google OAuth</span>
+            <% else %>
+              <span style="color: #666;">Email/Senha</span>
+            <% end %>
+          </td>
+          <td>
+            <% if user.admin? %>
+              <span style="color: #28a745; font-weight: bold;">✓ Admin</span>
+            <% else %>
+              <span style="color: #999;">Usuário</span>
+            <% end %>
+          </td>
+          <td><%= user.created_at.strftime("%d/%m/%Y") %></td>
+          <td>
+            <%= button_to user.admin? ? "Remover Admin" : "Tornar Admin", 
+                toggle_admin_admin_user_path(user), 
+                method: :patch,
+                data: { confirm: "Tem certeza que deseja #{user.admin? ? 'remover' : 'conceder'} permissões de admin para #{user.name}?" },
+                class: "btn",
+                style: "padding: 5px 10px; font-size: 12px; background: #{user.admin? ? '#dc3545' : '#28a745'};" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card" style="margin-top: 20px;">
+  <h3>Estatísticas</h3>
+  <p><strong>Total de usuários:</strong> <%= @users.count %></p>
+  <p><strong>Administradores:</strong> <%= @users.where(admin: true).count %></p>
+  <p><strong>Usuários normais:</strong> <%= @users.where(admin: false).count %></p>
+  <p><strong>Login com Google:</strong> <%= @users.where.not(provider: nil).count %></p>
+  <p><strong>Login com Email/Senha:</strong> <%= @users.where(provider: nil).count %></p>
+</div>

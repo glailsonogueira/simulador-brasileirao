@@ -1,0 +1,43 @@
+<h1>Editar Partida - Rodada <%= @round.number %></h1>
+
+<%= link_to "← Voltar", admin_round_matches_path(@round), class: "btn", style: "margin-bottom: 20px;" %>
+
+<div class="card" style="max-width: 600px;">
+  <%= form_with model: @match, url: admin_round_match_path(@round, @match), method: :patch, local: true do |f| %>
+    <div style="margin-bottom: 15px;">
+      <%= f.label :home_club_id, "Mandante:" %><br>
+      <%= f.collection_select :home_club_id, @round.championship.clubs.ordered, :id, :name, {}, { style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" } %>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :away_club_id, "Visitante:" %><br>
+      <%= f.collection_select :away_club_id, @round.championship.clubs.ordered, :id, :name, {}, { style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" } %>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :scheduled_at, "Data e Hora:" %><br>
+      <%= f.datetime_local_field :scheduled_at, style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" %>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label>
+        <%= f.check_box :finished %>
+        Jogo Finalizado
+      </label>
+    </div>
+
+    <% if @match.finished? %>
+      <div style="margin-bottom: 15px;">
+        <%= f.label :home_score, "Placar Mandante:" %><br>
+        <%= f.number_field :home_score, min: 0, max: 20, style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" %>
+      </div>
+
+      <div style="margin-bottom: 15px;">
+        <%= f.label :away_score, "Placar Visitante:" %><br>
+        <%= f.number_field :away_score, min: 0, max: 20, style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" %>
+      </div>
+    <% end %>
+
+    <%= f.submit "Salvar Alterações", class: "btn", style: "width: 100%;" %>
+  <% end %>
+</div>

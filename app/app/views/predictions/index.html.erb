@@ -1,0 +1,13 @@
+<h1>Minhas Previsões</h1>
+<div class="card">
+  <% if @championship %>
+    <h2><%= @championship.full_name %></h2>
+    <% @championship.rounds.order(:number).each do |round| %>
+      <div style="margin: 20px 0;">
+        <%= link_to "Rodada #{round.number}", round_path(round), class: "btn" %>
+      </div>
+    <% end %>
+  <% else %>
+    <p>Nenhum campeonato ativo no momento.</p>
+  <% end %>
+</div>

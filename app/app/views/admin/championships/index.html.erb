@@ -1,0 +1,61 @@
+<div class="container">
+  <h1>Gerenciar Campeonatos</h1>
+  
+  <%= link_to '+ Novo Campeonato', new_admin_championship_path, class: 'btn btn-primary mb-3' %>
+  
+  <% if @championships.any? %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Ano</th>
+          <th>Nome</th>
+          <th>Clubes</th>
+          <th>Rodadas</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @championships.each do |championship| %>
+          <tr class="<%= 'table-success' if championship.active? %>">
+            <td><strong><%= championship.year %></strong></td>
+            <td><%= championship.name %></td>
+            <td>
+              <%= championship.clubs_count %> / 20
+              <% if championship.complete? %>
+                <span class="badge bg-success">✓</span>
+              <% else %>
+                <span class="badge bg-warning"><%= championship.missing_clubs_count %> faltam</span>
+              <% end %>
+            </td>
+            <td><%= championship.rounds.count %> / 38</td>
+            <td>
+              <% if championship.active? %>
+                <span class="badge bg-success">ATIVO</span>
+              <% else %>
+                <span class="badge bg-secondary">Inativo</span>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to 'Ver Detalhes', admin_championship_path(championship), class: 'btn btn-sm btn-info' %>
+              <%= link_to 'Editar', edit_admin_championship_path(championship), class: 'btn btn-sm btn-warning' %>
+              <% unless championship.active? %>
+                <%= button_to 'Ativar', activate_admin_championship_path(championship), 
+                              method: :post, 
+                              class: 'btn btn-sm btn-success' %>
+              <% end %>
+              <%= button_to 'Excluir', admin_championship_path(championship), 
+                            method: :delete, 
+                            data: { confirm: 'Tem certeza? Isso removerá todas as rodadas e partidas!' },
+                            class: 'btn btn-sm btn-danger' %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info">
+      Nenhum campeonato cadastrado. <%= link_to 'Criar primeiro campeonato', new_admin_championship_path %>
+    </div>
+  <% end %>
+</div>

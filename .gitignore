@@ -1,0 +1,59 @@
+# Ignorar arquivos temporários e logs
+*.log
+tmp/
+log/
+*.swp
+*.swo
+*~
+
+# Ignorar banco de dados local
+*.sqlite3
+*.sqlite3-*
+
+# Ignorar uploads e arquivos públicos temporários
+/storage/*
+!/storage/.keep
+/public/uploads
+
+# Ignorar arquivos de ambiente
+.env
+.env.local
+
+# Ignorar dependências
+
+
+[200~cd ~/ra-brasileirao-simulador
+
+# Inicializar git (se ainda não foi)
+git init
+
+# Criar .gitignore
+cat > .gitignore << 'EOF'
+# Ignorar arquivos temporários e logs
+*.log
+tmp/
+log/
+*.swp
+*.swo
+*~
+
+# Ignorar banco de dados local
+*.sqlite3
+*.sqlite3-*
+
+# Ignorar uploads e arquivos públicos temporários
+/storage/*
+!/storage/.keep
+/public/uploads
+
+# Ignorar arquivos de ambiente
+.env
+.env.local
+
+# Ignorar dependências
+node_modules/
+/vendor/bundle
+
+# Ignorar arquivos do sistema
+.DS_Store
+Thumbs.db

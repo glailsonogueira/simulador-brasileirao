@@ -1,0 +1,103 @@
+<div class="container">
+  <h1><%= @championship.full_name %></h1>
+  
+  <div class="championship-actions mb-4">
+    <%= link_to '← Voltar', admin_championships_path, class: 'btn btn-secondary' %>
+    <%= link_to 'Editar Campeonato', edit_admin_championship_path(@championship), class: 'btn btn-warning' %>
+    
+    <% if @championship.complete? && @championship.rounds.empty? %>
+      <%= button_to 'Gerar 38 Rodadas', generate_rounds_admin_championship_path(@championship), 
+                    method: :post, 
+                    data: { confirm: 'Isso criará 38 rodadas vazias. Confirma?' },
+                    class: 'btn btn-success' %>
+    <% end %>
+  </div>
+  
+  <div class="championship-stats">
+    <div class="stat-card">
+      <h3>Status</h3>
+      <% if @championship.active? %>
+        <span class="badge bg-success">ATIVO</span>
+      <% else %>
+        <span class="badge bg-secondary">Inativo</span>
+      <% end %>
+    </div>
+    
+    <div class="stat-card">
+      <h3>Clubes</h3>
+      <p><%= @championship.clubs_count %> / 20</p>
+      <% if @championship.complete? %>
+        <span class="badge bg-success">✓ Completo</span>
+      <% else %>
+        <span class="badge bg-warning">Faltam <%= @championship.missing_clubs_count %></span>
+      <% end %>
+    </div>
+    
+    <div class="stat-card">
+      <h3>Rodadas</h3>
+      <p><%= @championship.rounds.count %> / 38</p>
+    </div>
+  </div>
+  
+  <h2 class="mt-5">Clubes Participantes (<%= @championship.clubs_count %>/20)</h2>
+  
+  <% if @championship.can_add_club? && @available_clubs.any? %>
+    <div class="add-club-section mb-4">
+      <%= form_with url: add_club_admin_championship_path(@championship), method: :post, local: true do |f| %>
+        <div class="input-group">
+          <%= select_tag :club_id, 
+                         options_from_collection_for_select(@available_clubs, :id, :name),
+                         class: 'form-control',
+                         prompt: 'Selecione um clube para adicionar' %>
+          <%= f.submit 'Adicionar Clube', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  <% elsif !@championship.can_add_club? %>
+    <div class="alert alert-info">
+      ✓ Campeonato completo com 20 clubes
+    </div>
+  <% end %>
+  
+  <% if @championship_clubs.any? %>
+    <div class="clubs-grid">
+      <% @championship_clubs.each do |cc| %>
+        <div class="club-card-championship">
+          <% if cc.club.badge.attached? %>
+            <%= image_tag cc.club.badge, class: 'club-badge-large' %>
+          <% else %>
+            <div class="no-badge">Sem escudo</div>
+          <% end %>
+          <h4><%= cc.club.name %></h4>
+          <p class="club-abbr"><%= cc.club.abbreviation %></p>
+          <% if cc.club.is_remo? %>
+            <span class="badge special">⭐ CLUBE ESPECIAL</span>
+          <% end %>
+          <%= button_to 'Remover', 
+                        remove_club_admin_championship_path(@championship, club_id: cc.club.id), 
+                        method: :delete,
+                        data: { confirm: "Remover #{cc.club.name}?" },
+                        class: 'btn btn-sm btn-danger mt-2' %>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-warning">
+      Nenhum clube adicionado ainda. Adicione 20 clubes para começar.
+    </div>
+  <% end %>
+  
+  <% if @championship.rounds.any? %>
+    <h2 class="mt-5">Rodadas do Campeonato</h2>
+    <div class="rounds-list">
+      <% @championship.rounds.order(:number).each do |round| %>
+        <div class="round-item-admin">
+          <h4>Rodada <%= round.number %></h4>
+          <p>Partidas: <%= round.matches.count %> / 10</p>
+          <%= link_to 'Gerenciar Partidas', admin_round_matches_path(round), class: 'btn btn-sm btn-primary' %>
+          <%= link_to 'Resultados', admin_round_results_path(round), class: 'btn btn-sm btn-success' %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

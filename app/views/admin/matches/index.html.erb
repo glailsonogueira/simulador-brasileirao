@@ -1,0 +1,50 @@
+<h1>Partidas - Rodada <%= @round.number %></h1>
+
+<%= link_to "← Voltar", admin_championship_path(@round.championship), class: "btn", style: "margin-bottom: 20px;" %>
+<%= link_to "Nova Partida", new_admin_round_match_path(@round), class: "btn", style: "margin-bottom: 20px; background: #28a745;" %>
+
+<div class="card">
+  <% if @matches.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th>Mandante</th>
+          <th>Visitante</th>
+          <th>Placar</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @matches.each do |match| %>
+          <tr>
+            <td><%= match.scheduled_at&.strftime("%d/%m/%Y %H:%M") %></td>
+            <td><%= match.home_club.name %></td>
+            <td><%= match.away_club.name %></td>
+            <td style="text-align: center;">
+              <% if match.finished? %>
+                <%= match.home_score %> x <%= match.away_score %>
+              <% else %>
+                -
+              <% end %>
+            </td>
+            <td>
+              <% if match.finished? %>
+                <span style="color: green;">✓ Finalizado</span>
+              <% else %>
+                <span style="color: #999;">Agendado</span>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to "Editar", edit_admin_round_match_path(@round, match), class: "btn", style: "padding: 5px 10px; font-size: 12px; margin: 2px;" %>
+              <%= button_to "Remover", admin_round_match_path(@round, match), method: :delete, data: { confirm: "Tem certeza?" }, class: "btn btn-danger", style: "padding: 5px 10px; font-size: 12px; margin: 2px;" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>Nenhuma partida cadastrada para esta rodada.</p>
+  <% end %>
+</div>

@@ -1,0 +1,7 @@
+<div class="container">
+  <h1>Editar Campeonato <%= @championship.year %></h1>
+  
+  <%= link_to '← Voltar', admin_championship_path(@championship), class: 'btn btn-secondary mb-3' %>
+  
+  <%= render 'form', championship: @championship %>
+</div>

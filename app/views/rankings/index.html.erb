@@ -1,0 +1,28 @@
+<% content_for :title, "Rankings" %>
+<%= breadcrumb ["Início", root_path], "Rankings" %>
+
+<h1>Ranking Geral</h1>
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Posição</th>
+        <th>Usuário</th>
+        <th>Pontos</th>
+        <th>Rodadas Vencidas</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @overall_standings.each do |standing| %>
+        <tr>
+          <td><%= standing.position %></td>
+          <td><%= standing.user.name %></td>
+          <td><%= standing.total_points %></td>
+          <td><%= standing.rounds_won %></td>
+          <td><%= link_to "Detalhes", user_detail_rankings_path(standing.user) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

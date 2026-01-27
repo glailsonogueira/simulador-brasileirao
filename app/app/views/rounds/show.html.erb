@@ -1,0 +1,40 @@
+<h1>Rodada <%= @round.number %></h1>
+<div class="card">
+  <%= form_with url: update_batch_predictions_path, method: :patch, local: true do %>
+    <table>
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th>Mandante</th>
+          <th>Placar</th>
+          <th>Visitante</th>
+          <th>Sua Previsão</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @matches.each do |match| %>
+          <tr>
+            <td><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
+            <td><%= match.home_club.name %></td>
+            <td style="text-align: center;">
+              <% if match.finished? %>
+                <%= match.home_score %> x <%= match.away_score %>
+              <% else %>
+                -
+              <% end %>
+            </td>
+            <td><%= match.away_club.name %></td>
+            <td>
+              <% prediction = @predictions[match.id] %>
+              <%= number_field_tag "predictions[#{match.id}][home]", prediction&.predicted_home_score, min: 0, max: 20, style: "width: 50px; text-align: center;" %>
+              x
+              <%= number_field_tag "predictions[#{match.id}][away]", prediction&.predicted_away_score, min: 0, max: 20, style: "width: 50px; text-align: center;" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= hidden_field_tag :round_id, @round.id %>
+    <%= submit_tag "Salvar Previsões", class: "btn", style: "margin-top: 20px;" %>
+  <% end %>
+</div>

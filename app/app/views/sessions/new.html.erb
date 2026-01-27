@@ -1,0 +1,19 @@
+<div class="card" style="max-width: 500px; margin: 50px auto;">
+  <h1 style="margin-bottom: 20px;">Login</h1>
+  <%= form_with url: login_path, method: :post, local: true do |f| %>
+    <div style="margin-bottom: 15px;">
+      <%= f.label :email, "Email:" %><br>
+      <%= f.email_field :email, required: true, style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" %>
+    </div>
+    <div style="margin-bottom: 15px;">
+      <%= f.label :password, "Senha:" %><br>
+      <%= f.password_field :password, required: true, style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" %>
+    </div>
+    <%= f.submit "Entrar", class: "btn", style: "width: 100%; margin-bottom: 15px;" %>
+  <% end %>
+  <hr style="margin: 20px 0;">
+  <%= button_to "Login com Google", "/auth/google_oauth2", method: :post, class: "btn", style: "width: 100%; background: #db4437;" %>
+  <p style="margin-top: 20px; text-align: center;">
+    Não tem conta? <%= link_to "Cadastre-se", signup_path %>
+  </p>
+</div>

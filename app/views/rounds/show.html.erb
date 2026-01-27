@@ -1,0 +1,119 @@
+<% content_for :title, "Rodada #{@round.number}" %>
+<%= breadcrumb ['Início', root_path], ['Previsões', predictions_path], "Rodada #{@round.number}" %>
+
+<h1>Rodada <%= @round.number %></h1>
+
+<% 
+  status = @round.status
+  can_predict = status == :open
+%>
+
+<% unless can_predict %>
+  <div class="flash alert">
+    <% if status == :locked %>
+       Esta rodada está bloqueada. Aguarde a rodada anterior ser finalizada.
+    <% elsif status == :closed %>
+      ⏰ Prazo expirado! Não é mais possível fazer previsões para esta rodada.
+    <% elsif status == :finished %>
+      ✓ Esta rodada já foi finalizada.
+    <% end %>
+  </div>
+<% end %>
+
+<div class="card">
+  <%= form_with url: update_batch_predictions_path, method: :patch, local: true do %>
+    <table>
+      <thead>
+        <tr>
+          <th>Data/Hora</th>
+          <th style="text-align: right;">Mandante</th>
+          <th style="text-align: center;">Sua Previsão</th>
+          <th>Visitante</th>
+          <% if @round.all_matches_finished? %>
+            <th style="text-align: center;">Placar Final</th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @matches.each do |match| %>
+          <tr>
+            <td><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
+            
+            <td style="text-align: right;">
+              <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                <strong><%= match.home_club.name %></strong>
+                <% if match.home_club.special_club? %>
+                  <span style="color: #ffc107; font-size: 16px;">★</span>
+                <% end %>
+                <% if match.home_club.badge.attached? %>
+                  <%= image_tag match.home_club.badge, style: "width: 30px; height: 30px; object-fit: contain;" %>
+                <% else %>
+                  <div style="width: 30px; height: 30px; background: <%= match.home_club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
+                <% end %>
+              </div>
+            </td>
+            
+            <td style="text-align: center;">
+              <% prediction = @predictions[match.id] %>
+              <% if can_predict %>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                  <%= number_field_tag "predictions[#{match.id}][home]", prediction&.home_score, min: 0, max: 20, style: "width: 50px; text-align: center; padding: 5px;" %>
+                  <strong>x</strong>
+                  <%= number_field_tag "predictions[#{match.id}][away]", prediction&.away_score, min: 0, max: 20, style: "width: 50px; text-align: center; padding: 5px;" %>
+                </div>
+              <% else %>
+                <% if prediction %>
+                  <strong><%= prediction.home_score %> x <%= prediction.away_score %></strong>
+                <% else %>
+                  <span style="color: #999;">-</span>
+                <% end %>
+              <% end %>
+            </td>
+            
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <% if match.away_club.badge.attached? %>
+                  <%= image_tag match.away_club.badge, style: "width: 30px; height: 30px; object-fit: contain;" %>
+                <% else %>
+                  <div style="width: 30px; height: 30px; background: <%= match.away_club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
+                <% end %>
+                <% if match.away_club.special_club? %>
+                  <span style="color: #ffc107; font-size: 16px;">★</span>
+                <% end %>
+                <strong><%= match.away_club.name %></strong>
+              </div>
+            </td>
+            
+            <% if @round.all_matches_finished? %>
+              <td style="text-align: center;">
+                <% if match.finished? %>
+                  <strong style="color: #28a745;"><%= match.home_score %> x <%= match.away_score %></strong>
+                <% else %>
+                  <span style="color: #999;">-</span>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <% if can_predict %>
+      <%= hidden_field_tag :round_id, @round.id %>
+      <%= submit_tag "Salvar Previsões", class: "btn", style: "margin-top: 20px; width: 100%; padding: 15px; font-size: 16px;" %>
+    <% end %>
+  <% end %>
+</div>
+
+<% if @round.matches.any? { |m| m.involves_remo? } %>
+  <div class="card" style="background: #fff3cd; border: 2px solid #ffc107;">
+    <h3 style="color: #856404;">⚠️ Atenção - Pontuação Especial!</h3>
+    <p style="color: #856404; margin-top: 10px;">
+      Esta rodada tem jogo do <strong>Remo (★)</strong>! A pontuação é DOBRADA:
+    </p>
+    <ul style="color: #856404; margin-top: 10px; margin-left: 20px;">
+      <li><strong>Placar exato:</strong> 20 pontos (ao invés de 10)</li>
+      <li><strong>Resultado correto:</strong> 10 pontos (ao invés de 5)</li>
+    </ul>
+  </div>
+<% end %>

@@ -1,0 +1,26 @@
+<h1>Ranking - Rodada <%= @round.number %></h1>
+<%= link_to "← Voltar", rankings_path, class: "btn", style: "margin-bottom: 20px;" %>
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Posição</th>
+        <th>Usuário</th>
+        <th>Pontos</th>
+        <th>Placares Exatos</th>
+        <th>Resultados Corretos</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @round_scores.each do |score| %>
+        <tr>
+          <td><%= score.position %></td>
+          <td><%= score.user.name %></td>
+          <td><%= score.points %></td>
+          <td><%= score.exact_scores %></td>
+          <td><%= score.correct_results %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
