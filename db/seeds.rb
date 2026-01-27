@@ -25,7 +25,6 @@ clubs_data = [
   { name: 'Fluminense', abbreviation: 'FLU', primary_color: '#8B0000', special_club: false },
   { name: 'Grêmio', abbreviation: 'GRE', primary_color: '#0000FF', special_club: false },
   { name: 'Internacional', abbreviation: 'INT', primary_color: '#FF0000', special_club: false },
-  { name: 'Juventude', abbreviation: 'JUV', primary_color: '#008000', special_club: false },
   { name: 'Mirassol', abbreviation: 'MIR', primary_color: '#FFFF00', special_club: false },
   { name: 'Palmeiras', abbreviation: 'PAL', primary_color: '#008000', special_club: false },
   { name: 'Red Bull Bragantino', abbreviation: 'RBB', primary_color: '#FFFFFF', special_club: false },
