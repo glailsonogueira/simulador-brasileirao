@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_27_143238) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_28_015256) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -72,6 +72,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_27_143238) do
     t.boolean "special_club", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "badge_filename"
     t.index ["abbreviation"], name: "index_clubs_on_abbreviation", unique: true
     t.index ["name"], name: "index_clubs_on_name", unique: true
     t.index ["special_club"], name: "index_clubs_on_special_club"

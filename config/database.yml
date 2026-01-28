@@ -8,12 +8,12 @@ default: &default
 
 development:
   <<: *default
-  database: ra_brasileirao_simulador_development
+  database: simulador-brasileirao_development
 
 test:
   <<: *default
-  database: ra_brasileirao_simulador_test
+  database: simulador-brasileirao_test
 
 production:
   <<: *default
-  database: ra_brasileirao_simulador_production
+  database: simulador-brasileirao_production

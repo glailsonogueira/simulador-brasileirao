@@ -1,32 +1,27 @@
 class Club < ApplicationRecord
   has_one_attached :badge
-  has_many :home_matches, class_name: 'Match', foreign_key: 'home_club_id'
-  has_many :away_matches, class_name: 'Match', foreign_key: 'away_club_id'
+  has_many :home_matches, class_name: 'Match', foreign_key: 'home_club_id', dependent: :destroy
+  has_many :away_matches, class_name: 'Match', foreign_key: 'away_club_id', dependent: :destroy
   has_many :championship_clubs, dependent: :destroy
   has_many :championships, through: :championship_clubs
   
   validates :name, presence: true, uniqueness: true
-  validates :abbreviation, presence: true,
-                          uniqueness: true,
-                          length: { is: 3 },
-                          format: { with: /\A[A-Z]{3}\z/, message: "deve ter exatamente 3 letras maiúsculas" }
+  validates :abbreviation, presence: true, length: { maximum: 3 }
   
-  before_validation :upcase_abbreviation
-  
-  scope :special, -> { where(special_club: true) }
   scope :ordered, -> { order(:name) }
+  scope :special, -> { where(special_club: true) }
   
-  def is_remo?
-    special_club?
+  def matches
+    Match.where('home_club_id = ? OR away_club_id = ?', id, id)
   end
   
-  def participating_in?(championship)
-    championships.include?(championship)
-  end
-  
-  private
-  
-  def upcase_abbreviation
-    self.abbreviation = abbreviation&.upcase
+  def badge_url
+    if badge.attached?
+      Rails.application.routes.url_helpers.rails_blob_path(badge, only_path: true)
+    elsif badge_filename.present?
+      "/badges/#{badge_filename}"
+    else
+      nil
+    end
   end
 end
