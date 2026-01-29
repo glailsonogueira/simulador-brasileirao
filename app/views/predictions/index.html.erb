@@ -1,94 +1,51 @@
-<% content_for :title, "Previsões" %>
-<%= breadcrumb ['Início', root_path], 'Previsões' %>
+<% content_for :title, "Previsoes" %>
+<%= breadcrumb ["Inicio", root_path], "Previsoes" %>
 
-<h1></h1>
 <div style="text-align: center; margin-bottom: 30px;">
-  <h1 style="color: #000080;">Minhas Previsões</h1>
-  <div style="margin-top: 15px;">
-    <%= link_to "Voltar", root_path, class: "btn", style: "margin: 0 5px;" %>
-  </div>
+  <h1 style="color: #000080;">Selecione um Campeonato</h1>
+  <p style="color: #666; margin-top: 10px;">Escolha o campeonato para fazer suas previsoes</p>
 </div>
 
-<div class="card">
-  <% if @championship %>
-    <h2><%= @championship.full_name %></h2>
-    <p style="margin: 15px 0;">Selecione uma rodada para fazer suas previsões:</p>
-    
-    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 20px;">
-      <% @rounds.each do |round| %>
-        <% 
-          status = round.status
-          is_locked = status == :locked
-          is_finished = status == :finished
-          is_closed = status == :closed
-          is_open = status == :open
-          
-          bg_color = if is_locked
-            '#e0e0e0'
-          elsif is_finished
-            '#d4edda'
-          elsif is_closed
-            '#f8d7da'
-          else
-            '#000080'
-          end
-          
-          text_color = is_locked ? '#666' : 'white'
-          cursor = is_locked ? 'not-allowed' : 'pointer'
-        %>
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+  <% @championships.each do |championship| %>
+    <%= link_to championship_predictions_path(championship_id: championship.id), style: "text-decoration: none;" do %>
+      <div class="card" style="text-align: center; padding: 30px; transition: transform 0.2s;">
+        <h2 style="color: #000080; margin-bottom: 15px;">
+          <%= championship.full_name %>
+        </h2>
         
-        <% if is_locked %>
-          <div style="background: <%= bg_color %>; color: <%= text_color %>; padding: 20px; border-radius: 5px; text-align: center; cursor: <%= cursor %>; opacity: 0.6;">
-            <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">
-              Rodada <%= round.number %>
-            </div>
-            <div style="font-size: 12px; margin-top: 10px;">
-               Bloqueada
-            </div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px;">
+          <div>
+            <p style="color: #666; font-size: 12px;">Status</p>
+            <p style="font-size: 18px; font-weight: bold; color: <%= championship.active? ? '#28a745' : '#999' %>;">
+              <%= championship.active? ? 'Ativo' : 'Inativo' %>
+            </p>
           </div>
-        <% else %>
-          <%= link_to round_path(round), style: "text-decoration: none;" do %>
-            <div style="background: <%= bg_color %>; color: <%= text_color %>; padding: 20px; border-radius: 5px; text-align: center; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-              <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">
-                Rodada <%= round.number %>
-              </div>
-              <div style="font-size: 12px; margin-top: 10px;">
-                <% if is_finished %>
-                  ✓ Finalizada
-                <% elsif is_closed %>
-                  ⏰ Encerrada
-                <% else %>
-                  ✏️ Aberta
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-        <% end %>
-      <% end %>
-    </div>
-    
-    <div class="card" style="margin-top: 30px; background: #f8f9fa;">
-      <h3>Legenda:</h3>
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px;">
-        <div style="display: flex; align-items: center;">
-          <div style="width: 30px; height: 30px; background: #000080; border-radius: 5px; margin-right: 10px;"></div>
-          <span><strong>Aberta:</strong> Você pode fazer suas previsões</span>
+          <div>
+            <p style="color: #666; font-size: 12px;">Clubes</p>
+            <p style="font-size: 18px; font-weight: bold; color: #000080;">
+              <%= championship.clubs_count %>
+            </p>
+          </div>
+          <div>
+            <p style="color: #666; font-size: 12px;">Rodadas</p>
+            <p style="font-size: 18px; font-weight: bold; color: #000080;">
+              <%= championship.rounds.count %>
+            </p>
+          </div>
         </div>
-        <div style="display: flex; align-items: center;">
-          <div style="width: 30px; height: 30px; background: #f8d7da; border-radius: 5px; margin-right: 10px;"></div>
-          <span><strong>Encerrada:</strong> Prazo expirado</span>
-        </div>
-        <div style="display: flex; align-items: center;">
-          <div style="width: 30px; height: 30px; background: #d4edda; border-radius: 5px; margin-right: 10px;"></div>
-          <span><strong>Finalizada:</strong> Todos os jogos finalizados</span>
-        </div>
-        <div style="display: flex; align-items: center;">
-          <div style="width: 30px; height: 30px; background: #e0e0e0; border-radius: 5px; margin-right: 10px;"></div>
-          <span><strong>Bloqueada:</strong> Aguarde a rodada anterior finalizar</span>
+        
+        <div style="margin-top: 20px; color: #000080; font-weight: bold;">
+          Fazer Previsoes &#8594;
         </div>
       </div>
-    </div>
-  <% else %>
-    <p>Nenhum campeonato ativo no momento.</p>
+    <% end %>
   <% end %>
 </div>
+
+<style>
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+</style>

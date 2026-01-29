@@ -4,7 +4,7 @@ module Admin
     before_action :set_championship, only: [:show, :edit, :update, :destroy, :activate]
     
     def index
-      @championships = Championship.ordered
+      @championships = Championship.order(year: :desc)
     end
     
     def show

@@ -1,5 +1,5 @@
 <% content_for :title, "Ranking - Rodada #{@round.number}" %>
-<%= breadcrumb ["Inicio", root_path], ["Rankings", rankings_path], [@championship.full_name, championship_rankings_path(@championship)], "Rodada #{@round.number}" %>
+<%= breadcrumb ["Inicio", root_path], ["Rankings", rankings_path], [@championship.full_name, championship_rankings_path(championship_id: @championship.id)], "Rodada #{@round.number}" %>
 
 <div style="text-align: center; margin-bottom: 30px;">
   <h1 style="color: #000080;">Ranking - Rodada <%= @round.number %></h1>
@@ -7,7 +7,7 @@
     <strong><%= @championship.full_name %></strong>
   </p>
   <div style="margin-top: 15px;">
-    <%= link_to "Voltar", championship_rankings_path(@championship), class: "btn" %>
+    <%= link_to "Voltar", championship_rankings_path(championship_id: @championship.id), class: "btn" %>
   </div>
 </div>
 

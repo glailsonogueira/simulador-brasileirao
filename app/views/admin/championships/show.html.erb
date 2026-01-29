@@ -37,6 +37,13 @@
       <p style="font-size: 18px; font-weight: bold;"><%= @championship.end_date&.strftime("%d/%m/%Y") %></p>
     </div>
   </div>
+  <% if @championship.favorite_club.present? %>
+    <div style="text-align: center; margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 5px;">
+      <p style="color: #856404; font-weight: bold;">
+        Clube Favorito (Pontuacao Dobrada): <%= @championship.favorite_club.name %> &#9733;
+      </p>
+    </div>
+  <% end %>
 </div>
 
 <div class="card">
@@ -46,7 +53,7 @@
   
   <% if @championship.can_add_club? %>
     <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 5px;">
-      <%= form_with url: admin_championship_add_club_path(@championship), method: :post, local: true, style: "display: inline-flex; gap: 10px; align-items: center;" do |f| %>
+      <%= form_with url: add_club_admin_championship_path(@championship), method: :post, local: true, style: "display: inline-flex; gap: 10px; align-items: center;" do |f| %>
         <%= select_tag :club_id, options_from_collection_for_select(Club.where.not(id: @championship.clubs.pluck(:id)).ordered, :id, :name), prompt: "Selecione um clube", style: "padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
         <%= f.submit "Adicionar Clube", class: "btn" %>
       <% end %>
@@ -54,26 +61,31 @@
   <% end %>
   
   <% if @championship.clubs.any? %>
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
-      <% @championship.clubs.ordered.each_slice(10).each do |clubs_column| %>
-        <div>
-          <% clubs_column.each do |club| %>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <% if club.badge_url %>
-                  <%= image_tag club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
-                <% else %>
-                  <div style="width: 30px; height: 30px; background: <%= club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
-                <% end %>
-                <strong><%= club.name %></strong>
-                <span style="color: #666; font-size: 12px;">(<%= club.abbreviation %>)</span>
-                <% if club.special_club? %>
-                  <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
-                <% end %>
-              </div>
-              <%= button_to "X", admin_championship_remove_club_path(@championship, club_id: club.id), method: :delete, data: { confirm: "Remover #{club.name}?" }, class: "btn btn-danger", style: "padding: 5px 10px; font-size: 12px;" %>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+      <% @championship.clubs.ordered.each do |club| %>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid #ddd; border-radius: 5px; background: white;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <% if club.badge_url %>
+              <%= image_tag club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
+            <% else %>
+              <div style="width: 30px; height: 30px; background: <%= club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
+            <% end %>
+            <div>
+              <strong><%= club.name %></strong>
+              <span style="color: #666; font-size: 12px;">(<%= club.abbreviation %>)</span>
+              <% if club.special_club? %>
+                <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
+              <% end %>
             </div>
-          <% end %>
+          </div>
+          <div style="display: flex; gap: 5px;">
+            <%= link_to edit_admin_club_path(club), style: "text-decoration: none;", title: "Editar" do %>
+              <img src="/pen-icon.png" alt="Editar" style="width: 20px; height: 20px;">
+            <% end %>
+            <%= button_to remove_club_admin_championship_path(@championship, club_id: club.id), method: :delete, data: { confirm: "Remover #{club.name}?" }, style: "background: transparent; border: none; cursor: pointer; padding: 0;", title: "Remover" do %>
+              <img src="/bin-icon.png" alt="Remover" style="width: 20px; height: 20px;">
+            <% end %>
+          </div>
         </div>
       <% end %>
     </div>
@@ -100,8 +112,8 @@
           </h3>
           
           <div style="display: flex; flex-direction: column; gap: 10px;">
-            <%= link_to "Partidas", admin_round_matches_path(round), class: "btn", style: "width: 100%;" %>
-            <%= link_to "Resultados", admin_round_results_path(round), class: "btn", style: "width: 100%; background: #28a745;" %>
+            <%= link_to "Partidas", matches_admin_round_path(round), class: "btn", style: "width: 100%;" %>
+            <%= link_to "Resultados", results_admin_round_path(round), class: "btn", style: "width: 100%; background: #28a745;" %>
           </div>
           
           <div style="margin-top: 15px; font-size: 12px; color: #666;">

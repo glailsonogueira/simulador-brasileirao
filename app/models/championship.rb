@@ -1,39 +1,30 @@
 class Championship < ApplicationRecord
+  belongs_to :favorite_club, class_name: 'Club', optional: true
   has_many :championship_clubs, dependent: :destroy
   has_many :clubs, through: :championship_clubs
   has_many :rounds, dependent: :destroy
   has_many :overall_standings, dependent: :destroy
   
-  validates :year, presence: true, uniqueness: true,
-            numericality: { only_integer: true, greater_than: 2000 }
+  validates :year, presence: true, uniqueness: true
   validates :name, presence: true
-  validate :must_have_exactly_20_clubs, if: :active?
+  validate :only_one_active_championship, if: :active?
   
-  scope :active, -> { where(active: true) }
-  scope :ordered, -> { order(year: :desc) }
+  scope :active_championships, -> { where(active: true) }
   
   def self.current
-    active.first || ordered.first
+    active_championships.first
   end
   
   def full_name
     "#{name} #{year}"
   end
   
-  def can_add_club?
-    clubs.count < 20
-  end
-  
-  def can_remove_club?
-    clubs.count > 0
-  end
-  
   def clubs_count
     clubs.count
   end
   
-  def missing_clubs_count
-    [0, 20 - clubs_count].max
+  def can_add_club?
+    clubs_count < 20
   end
   
   def complete?
@@ -42,9 +33,9 @@ class Championship < ApplicationRecord
   
   private
   
-  def must_have_exactly_20_clubs
-    if clubs_count != 20
-      errors.add(:base, "Campeonato deve ter exatamente 20 clubes (atual: #{clubs_count})")
+  def only_one_active_championship
+    if Championship.where(active: true).where.not(id: id).exists?
+      errors.add(:active, 'Ja existe um campeonato ativo')
     end
   end
 end

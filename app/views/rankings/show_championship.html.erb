@@ -29,7 +29,7 @@
           <td style="text-align: center;"><%= standing.user.name %></td>
           <td style="text-align: center;"><strong><%= standing.total_points %></strong></td>
           <td style="text-align: center;">
-            <%= link_to user_detail_rankings_path(standing.user.id), style: "text-decoration: none; font-size: 24px;", title: "Detalhes" do %>
+            <%= link_to user_detail_rankings_path(championship_id: @championship.id, user_id: standing.user.id), style: "text-decoration: none; font-size: 24px;", title: "Detalhes" do %>
               &#128200;
             <% end %>
           </td>
@@ -64,7 +64,7 @@
           <p style="color: #999; font-size: 12px; margin-bottom: 15px;">Sem pontuacao</p>
         <% end %>
         
-        <%= link_to round_rankings_path(round_id: round.id), class: "btn", style: "width: 100%; padding: 8px; font-size: 14px;" do %>
+        <%= link_to round_rankings_path(championship_id: @championship.id, round_id: round.id), class: "btn", style: "width: 100%; padding: 8px; font-size: 14px;" do %>
           Ver Ranking Completo
         <% end %>
       </div>

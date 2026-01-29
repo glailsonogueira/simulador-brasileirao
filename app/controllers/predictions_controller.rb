@@ -2,13 +2,17 @@ class PredictionsController < ApplicationController
   before_action :require_login
 
   def index
-    @championship = Championship.current
-    redirect_to root_path, alert: 'Nenhum campeonato ativo no momento.' and return unless @championship
+    @championships = Championship.order(year: :desc)
+  end
+
+  def show_championship
+    @championship = Championship.find(params[:championship_id])
     @rounds = @championship.rounds.order(:number)
   end
 
   def update_batch
-    round = Round.find(params[:round_id])
+    @championship = Championship.find(params[:championship_id])
+    round = @championship.rounds.find(params[:round_id])
     predictions_params = params[:predictions] || {}
     
     updated_count = 0
@@ -44,6 +48,6 @@ class PredictionsController < ApplicationController
     message += " #{locked_count} jogo(s) bloqueado(s)." if locked_count > 0
     message += " #{skipped_count} jogo(s) ignorado(s) (campos vazios)." if skipped_count > 0
     
-    redirect_to round_path(round), notice: message
+    redirect_to round_prediction_path(championship_id: @championship.id, round_id: round.id), notice: message
   end
 end

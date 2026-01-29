@@ -13,14 +13,14 @@ Rails.application.routes.draw do
   post '/auth/google_oauth2', to: 'omniauth_callbacks#google_oauth2'
   
   get 'predictions', to: 'predictions#index'
-  patch 'predictions/update_batch', to: 'predictions#update_batch', as: :update_batch_predictions
+  get 'championship/:championship_id/predictions', to: 'predictions#show_championship', as: :championship_predictions
+  get 'championship/:championship_id/round/:round_id', to: 'rounds#show', as: :round_prediction
+  patch 'championship/:championship_id/predictions/update_batch', to: 'predictions#update_batch', as: :update_batch_predictions
   
   get 'rankings', to: 'rankings#index'
-  get 'rankings/championship/:id', to: 'rankings#show_championship', as: :championship_rankings
-  get 'rankings/round/:round_id', to: 'rankings#round', as: :round_rankings
-  get 'rankings/user/:id', to: 'rankings#user_detail', as: :user_detail_rankings
-  
-  resources :rounds, only: [:show]
+  get 'championship/:championship_id/ranking', to: 'rankings#show_championship', as: :championship_rankings
+  get 'championship/:championship_id/round/:round_id/ranking', to: 'rankings#round', as: :round_rankings
+  get 'championship/:championship_id/user/:user_id/ranking', to: 'rankings#user_detail', as: :user_detail_rankings
   
   namespace :admin do
     resources :championships do

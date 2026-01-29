@@ -51,14 +51,6 @@
       <small style="color: #666; display: block; margin-top: 5px;">Formatos aceitos: PNG, JPG, SVG</small>
     </div>
 
-    <div style="margin-bottom: 15px;">
-      <label style="display: flex; align-items: center; cursor: pointer; padding: 15px; background: #fff3cd; border: 2px solid #ffc107; border-radius: 5px;">
-        <%= f.check_box :special_club, style: "width: 20px; height: 20px; margin-right: 10px;" %>
-        <span style="font-weight: bold;">Clube Especial (Pontuacao Dobrada) &#9733;</span>
-      </label>
-      <small style="color: #666; display: block; margin-top: 5px;">Jogos deste clube valem pontuacao em dobro</small>
-    </div>
-
     <%= f.submit "Salvar Alteracoes", class: "btn", style: "width: 100%; padding: 15px; font-size: 16px; background: #28a745;" %>
   <% end %>
 </div>

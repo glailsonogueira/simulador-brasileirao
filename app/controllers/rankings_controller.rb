@@ -4,7 +4,7 @@ class RankingsController < ApplicationController
   end
 
   def show_championship
-    @championship = Championship.find(params[:id])
+    @championship = Championship.find(params[:championship_id])
     @overall_standings = @championship.overall_standings
                                       .includes(:user)
                                       .order(position: :asc)
@@ -12,7 +12,7 @@ class RankingsController < ApplicationController
   end
 
   def round
-    @championship = Championship.current
+    @championship = Championship.find(params[:championship_id])
     @round = @championship.rounds.find(params[:round_id])
     @round_scores = @round.round_scores
                           .includes(:user)
@@ -20,8 +20,8 @@ class RankingsController < ApplicationController
   end
 
   def user_detail
-    @championship = Championship.current
-    @user = User.find(params[:id])
+    @championship = Championship.find(params[:championship_id])
+    @user = User.find(params[:user_id])
     @overall_standing = @championship.overall_standings.find_by(user: @user)
     @round_scores = @user.round_scores
                          .joins(:round)

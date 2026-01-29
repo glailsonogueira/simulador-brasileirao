@@ -1,10 +1,18 @@
 <% content_for :title, "Rodada #{@round.number}" %>
-<%= breadcrumb ['Inicio', root_path], ['Previsoes', predictions_path], "Rodada #{@round.number}" %>
+<%= breadcrumb ['Inicio', root_path], ['Previsoes', predictions_path], [@championship.full_name, championship_predictions_path(championship_id: @championship.id)], "Rodada #{@round.number}" %>
 
-<h1>Rodada <%= @round.number %></h1>
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Rodada <%= @round.number %></h1>
+  <p style="font-size: 18px; color: #666; margin-top: 10px;">
+    <strong><%= @championship.full_name %></strong>
+  </p>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", championship_predictions_path(championship_id: @championship.id), class: "btn" %>
+  </div>
+</div>
 
 <div class="card">
-  <%= form_with url: update_batch_predictions_path, method: :patch, local: true do %>
+  <%= form_with url: update_batch_predictions_path(championship_id: @championship.id, round_id: @round.id), method: :patch, local: true do %>
     <table>
       <thead>
         <tr>
@@ -28,7 +36,7 @@
             <td style="text-align: right;">
               <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
                 <strong><%= match.home_club.name %></strong>
-                <% if match.home_club.special_club? %>
+                <% if match.involves_favorite? %>
                   <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
                 <% end %>
                 <% if match.home_club.badge_url %>
@@ -63,7 +71,7 @@
                 <% else %>
                   <div style="width: 30px; height: 30px; background: <%= match.away_club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
                 <% end %>
-                <% if match.away_club.special_club? %>
+                <% if match.involves_favorite? %>
                   <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
                 <% end %>
                 <strong><%= match.away_club.name %></strong>
@@ -95,7 +103,6 @@
     </table>
     
     <% if @matches.any? { |m| m.can_predict? } %>
-      <%= hidden_field_tag :round_id, @round.id %>
       <%= submit_tag "Salvar Previsoes", class: "btn", style: "margin-top: 20px;" %>
     <% else %>
       <p style="text-align: center; color: #999; margin-top: 20px;">Todos os jogos estao bloqueados ou finalizados.</p>

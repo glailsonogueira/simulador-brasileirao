@@ -8,7 +8,7 @@
 
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
   <% @championships.each do |championship| %>
-    <%= link_to championship_rankings_path(championship), style: "text-decoration: none;" do %>
+    <%= link_to championship_rankings_path(championship_id: championship.id), style: "text-decoration: none;" do %>
       <div class="card" style="text-align: center; padding: 30px; transition: transform 0.2s;">
         <h2 style="color: #000080; margin-bottom: 15px;">
           <%= championship.full_name %>

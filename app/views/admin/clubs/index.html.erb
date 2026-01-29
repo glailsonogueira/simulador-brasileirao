@@ -35,12 +35,12 @@
       </div>
       
       <div style="display: flex; justify-content: center; gap: 10px; margin-top: auto;">
-        <%= link_to edit_admin_club_path(club), style: "background: white; padding: 8px; border-radius: 5px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;" do %>
-          <img src="/pen-icon.png" alt="Editar" style="width: 24px; height: 24px;">
+        <%= link_to edit_admin_club_path(club), style: "background: white; padding: 8px; border-radius: 5px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;", title: "Editar" do %>
+          <img src="/pen-icon.svg" alt="Editar" style="width: 32px; height: 32px;">
         <% end %>
         
-        <%= button_to admin_club_path(club), method: :delete, data: { confirm: "Excluir #{club.name}?" }, style: "background: #dc3545; padding: 8px; border-radius: 5px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;" do %>
-          <img src="/bin-icon.png" alt="Excluir" style="width: 24px; height: 24px;">
+        <%= button_to admin_club_path(club), method: :delete, data: { confirm: "Excluir #{club.name}?" }, style: "background: #dc3545; padding: 8px; border-radius: 5px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;", title: "Excluir" do %>
+          <img src="/bin-icon.svg" alt="Excluir" style="width: 32px; height: 32px;">
         <% end %>
       </div>
       
