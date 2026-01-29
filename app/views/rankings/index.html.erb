@@ -1,28 +1,51 @@
 <% content_for :title, "Rankings" %>
-<%= breadcrumb ["Início", root_path], "Rankings" %>
+<%= breadcrumb ["Inicio", root_path], "Rankings" %>
 
-<h1>Ranking Geral</h1>
-<div class="card">
-  <table>
-    <thead>
-      <tr>
-        <th>Posição</th>
-        <th>Usuário</th>
-        <th>Pontos</th>
-        <th>Rodadas Vencidas</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @overall_standings.each do |standing| %>
-        <tr>
-          <td><%= standing.position %></td>
-          <td><%= standing.user.name %></td>
-          <td><%= standing.total_points %></td>
-          <td><%= standing.rounds_won %></td>
-          <td><%= link_to "Detalhes", user_detail_rankings_path(standing.user) %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Selecione um Campeonato</h1>
+  <p style="color: #666; margin-top: 10px;">Escolha o campeonato para visualizar os rankings</p>
 </div>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+  <% @championships.each do |championship| %>
+    <%= link_to championship_rankings_path(championship), style: "text-decoration: none;" do %>
+      <div class="card" style="text-align: center; padding: 30px; transition: transform 0.2s;">
+        <h2 style="color: #000080; margin-bottom: 15px;">
+          <%= championship.full_name %>
+        </h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px;">
+          <div>
+            <p style="color: #666; font-size: 12px;">Status</p>
+            <p style="font-size: 18px; font-weight: bold; color: <%= championship.active? ? '#28a745' : '#999' %>;">
+              <%= championship.active? ? 'Ativo' : 'Inativo' %>
+            </p>
+          </div>
+          <div>
+            <p style="color: #666; font-size: 12px;">Clubes</p>
+            <p style="font-size: 18px; font-weight: bold; color: #000080;">
+              <%= championship.clubs_count %>
+            </p>
+          </div>
+          <div>
+            <p style="color: #666; font-size: 12px;">Rodadas</p>
+            <p style="font-size: 18px; font-weight: bold; color: #000080;">
+              <%= championship.rounds.count %>
+            </p>
+          </div>
+        </div>
+        
+        <div style="margin-top: 20px; color: #000080; font-weight: bold;">
+          Ver Rankings &#8594;
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<style>
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+</style>

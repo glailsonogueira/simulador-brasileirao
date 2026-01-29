@@ -1,7 +1,87 @@
-<div class="container">
-  <h1>Editar Campeonato <%= @championship.year %></h1>
-  
-  <%= link_to '← Voltar', admin_championship_path(@championship), class: 'btn btn-secondary mb-3' %>
-  
-  <%= render 'form', championship: @championship %>
+<% content_for :title, "Editar Campeonato" %>
+<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], ["Campeonatos", admin_championships_path], "Editar" %>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Editar Campeonato</h1>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", admin_championship_path(@championship), class: "btn", style: "margin: 0 5px;" %>
+  </div>
+</div>
+
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+  <%= form_with model: @championship, url: admin_championship_path(@championship), method: :patch, local: true do |f| %>
+    <% if @championship.errors.any? %>
+      <div style="background: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+        <h4>Erros ao salvar:</h4>
+        <ul style="margin: 10px 0 0 20px;">
+          <% @championship.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+      <!-- Coluna Esquerda -->
+      <div>
+        <div style="margin-bottom: 20px;">
+          <%= f.label :year, "Ano:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+          <%= f.number_field :year, required: true, min: 2020, max: 2030, style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;" %>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <%= f.label :name, "Nome:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+          <%= f.text_field :name, required: true, placeholder: "Ex: Brasileirao Serie A", style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;" %>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <%= f.label :start_date, "Data de Inicio:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+          <%= f.date_field :start_date, required: true, style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;" %>
+        </div>
+      </div>
+
+      <!-- Coluna Direita -->
+      <div>
+        <div style="margin-bottom: 20px;">
+          <%= f.label :end_date, "Data de Fim:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+          <%= f.date_field :end_date, required: true, style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;" %>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <%= f.label :favorite_club_id, "Clube Favorito (Pontuacao Dobrada):", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+          <%= f.collection_select :favorite_club_id, @championship.clubs.ordered, :id, :name, { prompt: "Nenhum" }, style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;" %>
+          <small style="color: #666; display: block; margin-top: 5px;">Jogos deste clube valem pontuacao em dobro</small>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+            <%= f.check_box :active, style: "width: 20px; height: 20px; margin-right: 10px;" %>
+            <span style="font-weight: bold;">Campeonato Ativo</span>
+          </label>
+          <small style="color: #666; display: block; margin-top: 5px;">Apenas um campeonato pode estar ativo por vez</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumo -->
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+      <h3 style="text-align: center; color: #000080; margin-bottom: 15px;">Resumo</h3>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
+        <div>
+          <p style="color: #666; font-size: 12px;">Clubes</p>
+          <p style="font-size: 24px; font-weight: bold; color: #000080;"><%= @championship.clubs_count %>/20</p>
+        </div>
+        <div>
+          <p style="color: #666; font-size: 12px;">Rodadas</p>
+          <p style="font-size: 24px; font-weight: bold; color: #000080;"><%= @championship.rounds.count %></p>
+        </div>
+        <div>
+          <p style="color: #666; font-size: 12px;">Partidas</p>
+          <p style="font-size: 24px; font-weight: bold; color: #000080;"><%= @championship.rounds.joins(:matches).count %></p>
+        </div>
+      </div>
+    </div>
+
+    <%= f.submit "Salvar Alteracoes", class: "btn", style: "width: 100%; padding: 15px; font-size: 18px; background: #28a745; margin-top: 10px;" %>
+  <% end %>
 </div>

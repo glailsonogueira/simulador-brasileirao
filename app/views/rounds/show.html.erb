@@ -3,23 +3,6 @@
 
 <h1>Rodada <%= @round.number %></h1>
 
-<% 
-  status = @round.status
-  can_predict = status == :open
-%>
-
-<% unless can_predict %>
-  <div class="flash alert">
-    <% if status == :locked %>
-      Esta rodada esta bloqueada. Aguarde a rodada anterior ser finalizada.
-    <% elsif status == :closed %>
-      Prazo expirado! Nao e mais possivel fazer previsoes para esta rodada.
-    <% elsif status == :finished %>
-      Esta rodada ja foi finalizada.
-    <% end %>
-  </div>
-<% end %>
-
 <div class="card">
   <%= form_with url: update_batch_predictions_path, method: :patch, local: true do %>
     <table>
@@ -29,6 +12,7 @@
           <th style="text-align: right;">Mandante</th>
           <th style="text-align: center;">Sua Previsao</th>
           <th>Visitante</th>
+          <th style="text-align: center;">Status</th>
           <% if @round.all_matches_finished? %>
             <th style="text-align: center;">Placar Final</th>
           <% end %>
@@ -36,7 +20,9 @@
       </thead>
       <tbody>
         <% @matches.each do |match| %>
-          <tr>
+          <% can_predict = match.can_predict? %>
+          <% is_locked = match.locked? %>
+          <tr style="<%= 'opacity: 0.6;' if is_locked %>">
             <td><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
             
             <td style="text-align: right;">
@@ -84,6 +70,16 @@
               </div>
             </td>
             
+            <td style="text-align: center;">
+              <% if match.finished? %>
+                <span style="color: #28a745; font-weight: bold;">Finalizado</span>
+              <% elsif is_locked %>
+                <span style="color: #dc3545; font-weight: bold;">Bloqueado</span>
+              <% else %>
+                <span style="color: #ffc107; font-weight: bold;">Aberto</span>
+              <% end %>
+            </td>
+            
             <% if @round.all_matches_finished? %>
               <td style="text-align: center;">
                 <% if match.finished? %>
@@ -98,22 +94,11 @@
       </tbody>
     </table>
     
-    <% if can_predict %>
+    <% if @matches.any? { |m| m.can_predict? } %>
       <%= hidden_field_tag :round_id, @round.id %>
-      <%= submit_tag "Salvar Previsoes", class: "btn", style: "margin-top: 20px; width: 100%; padding: 15px; font-size: 16px;" %>
+      <%= submit_tag "Salvar Previsoes", class: "btn", style: "margin-top: 20px;" %>
+    <% else %>
+      <p style="text-align: center; color: #999; margin-top: 20px;">Todos os jogos estao bloqueados ou finalizados.</p>
     <% end %>
   <% end %>
 </div>
-
-<% if @round.matches.any? { |m| m.involves_remo? } %>
-  <div class="card" style="background: #fff3cd; border: 2px solid #ffc107;">
-    <h3 style="color: #856404;">Atencao - Pontuacao Especial!</h3>
-    <p style="color: #856404; margin-top: 10px;">
-      Esta rodada tem jogo do <strong>Remo (&#9733;)</strong>! A pontuacao e DOBRADA:
-    </p>
-    <ul style="color: #856404; margin-top: 10px; margin-left: 20px;">
-      <li><strong>Placar exato:</strong> 20 pontos (ao inves de 10)</li>
-      <li><strong>Resultado correto:</strong> 10 pontos (ao inves de 5)</li>
-    </ul>
-  </div>
-<% end %>

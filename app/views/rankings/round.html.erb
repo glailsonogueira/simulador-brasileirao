@@ -1,27 +1,35 @@
 <% content_for :title, "Ranking - Rodada #{@round.number}" %>
-<%= breadcrumb ["Início", root_path], ["Rankings", rankings_path], "Rodada #{@round.number}" %>
+<%= breadcrumb ["Inicio", root_path], ["Rankings", rankings_path], [@championship.full_name, championship_rankings_path(@championship)], "Rodada #{@round.number}" %>
 
-<h1>Ranking - Rodada <%= @round.number %></h1>
-<%= link_to "← Voltar", rankings_path, class: "btn", style: "margin-bottom: 20px;" %>
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Ranking - Rodada <%= @round.number %></h1>
+  <p style="font-size: 18px; color: #666; margin-top: 10px;">
+    <strong><%= @championship.full_name %></strong>
+  </p>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", championship_rankings_path(@championship), class: "btn" %>
+  </div>
+</div>
+
 <div class="card">
   <table>
     <thead>
       <tr>
-        <th>Posição</th>
-        <th>Usuário</th>
-        <th>Pontos</th>
-        <th>Placares Exatos</th>
-        <th>Resultados Corretos</th>
+        <th style="text-align: center;">Posicao</th>
+        <th style="text-align: center;">Usuario</th>
+        <th style="text-align: center;">Pontos</th>
+        <th style="text-align: center;">Placares Exatos</th>
+        <th style="text-align: center;">Resultados Corretos</th>
       </tr>
     </thead>
     <tbody>
-      <% @round_scores.each do |score| %>
+      <% @round_scores.each_with_index do |score, index| %>
         <tr>
-          <td><%= score.position %></td>
-          <td><%= score.user.name %></td>
-          <td><%= score.points %></td>
-          <td><%= score.exact_scores %></td>
-          <td><%= score.correct_results %></td>
+          <td style="text-align: center;"><strong><%= index + 1 %>°</strong></td>
+          <td style="text-align: center;"><%= score.user.name %></td>
+          <td style="text-align: center;"><strong><%= score.total_points %></strong></td>
+          <td style="text-align: center;"><%= score.exact_scores %></td>
+          <td style="text-align: center;"><%= score.correct_results %></td>
         </tr>
       <% end %>
     </tbody>

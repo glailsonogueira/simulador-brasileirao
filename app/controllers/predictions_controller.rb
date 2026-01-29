@@ -1,45 +1,49 @@
 class PredictionsController < ApplicationController
-  before_action :set_championship
-  
+  before_action :require_login
+
   def index
-    redirect_to root_path, alert: 'Nenhum campeonato ativo' unless @championship
-    if @championship
-      @rounds = @championship.rounds.includes(matches: [:home_club, :away_club]).order(:number)
-    end
+    @championship = Championship.current
+    redirect_to root_path, alert: 'Nenhum campeonato ativo no momento.' and return unless @championship
+    @rounds = @championship.rounds.order(:number)
   end
-  
+
   def update_batch
     round = Round.find(params[:round_id])
-    
-    unless round.is_unlocked?
-      redirect_to predictions_path, alert: 'Esta rodada ainda está bloqueada!'
-      return
-    end
-    
-    if round.deadline_passed?
-      redirect_to round_path(round), alert: 'Prazo expirado! Não é possível fazer palpites após 1 hora antes do primeiro jogo.'
-      return
-    end
-    
     predictions_params = params[:predictions] || {}
     
-    saved_count = 0
+    updated_count = 0
+    locked_count = 0
+    skipped_count = 0
+    
     predictions_params.each do |match_id, scores|
+      match = Match.find(match_id)
+      
+      # Pular se campos vazios ou incompletos
+      if scores[:home].blank? || scores[:away].blank?
+        skipped_count += 1
+        next
+      end
+      
+      # Verificar se o jogo está bloqueado
+      unless match.can_predict?
+        locked_count += 1
+        next
+      end
+      
       prediction = current_user.predictions.find_or_initialize_by(match_id: match_id)
+      
       if prediction.update(
         home_score: scores[:home],
         away_score: scores[:away]
       )
-        saved_count += 1
+        updated_count += 1
       end
     end
     
-    redirect_to round_path(round), notice: "#{saved_count} previsão(ões) salva(s) com sucesso!"
-  end
-  
-  private
-  
-  def set_championship
-    @championship = Championship.current
+    message = "#{updated_count} previsao(es) salva(s) com sucesso!"
+    message += " #{locked_count} jogo(s) bloqueado(s)." if locked_count > 0
+    message += " #{skipped_count} jogo(s) ignorado(s) (campos vazios)." if skipped_count > 0
+    
+    redirect_to round_path(round), notice: message
   end
 end

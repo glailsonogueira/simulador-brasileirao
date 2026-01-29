@@ -1,0 +1,64 @@
+<% content_for :title, "Editar Clube" %>
+<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], ["Clubes", admin_clubs_path], "Editar" %>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Editar Clube: <%= @club.name %></h1>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", admin_clubs_path, class: "btn", style: "margin: 0 5px;" %>
+  </div>
+</div>
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+  <%= form_with model: @club, url: admin_club_path(@club), method: :patch, local: true do |f| %>
+    <% if @club.errors.any? %>
+      <div style="background: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+        <h4>Erros:</h4>
+        <ul>
+          <% @club.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :name, "Nome do Clube:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+      <%= f.text_field :name, required: true, style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :abbreviation, "Sigla:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+      <%= f.text_field :abbreviation, required: true, maxlength: 3, style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
+      <small style="color: #666;">Maximo 3 caracteres</small>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :primary_color, "Cor Principal:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <%= f.color_field :primary_color, style: "width: 80px; height: 40px; border: 1px solid #ddd; border-radius: 5px;" %>
+        <%= f.text_field :primary_color, placeholder: "#000080", style: "flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :badge, "Escudo do Clube:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+      <% if @club.badge_url %>
+        <div style="margin: 10px 0;">
+          <%= image_tag @club.badge_url, style: "width: 100px; height: 100px; object-fit: contain; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: white;" %>
+        </div>
+      <% end %>
+      <%= f.file_field :badge, accept: "image/png,image/jpeg,image/jpg,image/svg+xml", style: "margin-top: 5px;" %>
+      <small style="color: #666; display: block; margin-top: 5px;">Formatos aceitos: PNG, JPG, SVG</small>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <label style="display: flex; align-items: center; cursor: pointer; padding: 15px; background: #fff3cd; border: 2px solid #ffc107; border-radius: 5px;">
+        <%= f.check_box :special_club, style: "width: 20px; height: 20px; margin-right: 10px;" %>
+        <span style="font-weight: bold;">Clube Especial (Pontuacao Dobrada) &#9733;</span>
+      </label>
+      <small style="color: #666; display: block; margin-top: 5px;">Jogos deste clube valem pontuacao em dobro</small>
+    </div>
+
+    <%= f.submit "Salvar Alteracoes", class: "btn", style: "width: 100%; padding: 15px; font-size: 16px; background: #28a745;" %>
+  <% end %>
+</div>

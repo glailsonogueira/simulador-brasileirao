@@ -14,26 +14,26 @@ User.create!(
 puts "✓ Usuário admin criado"
 
 clubs_data = [
-  { name: 'Athletico Paranaense', abbreviation: 'CAP', primary_color: '#FF0000', special_club: false, badge_filename: 'athletico-paranaense.svg' },
-  { name: 'Atlético Mineiro', abbreviation: 'CAM', primary_color: '#000000', special_club: false, badge_filename: 'atletico-mineiro.svg' },
-  { name: 'Bahia', abbreviation: 'BAH', primary_color: '#0000FF', special_club: false, badge_filename: 'bahia.svg' },
-  { name: 'Botafogo', abbreviation: 'BOT', primary_color: '#000000', special_club: false, badge_filename: 'botafogo.svg' },
+  { name: 'Athletico Paranaense', abbreviation: 'CAP', primary_color: '#FF0000', special_club: false, badge_filename: 'athletico-paranaense.png' },
+  { name: 'Atlético Mineiro', abbreviation: 'CAM', primary_color: '#000000', special_club: false, badge_filename: 'atletico-mineiro.png' },
+  { name: 'Bahia', abbreviation: 'BAH', primary_color: '#0000FF', special_club: false, badge_filename: 'bahia.png' },
+  { name: 'Botafogo', abbreviation: 'BOT', primary_color: '#000000', special_club: false, badge_filename: 'botafogo.png' },
   { name: 'Chapecoense', abbreviation: 'CHA', primary_color: '#008000', special_club: false, badge_filename: 'chapecoense.png' },
   { name: 'Corinthians', abbreviation: 'COR', primary_color: '#000000', special_club: false, badge_filename: 'corinthians.png' },
-  { name: 'Coritiba', abbreviation: 'CFC', primary_color: '#00FF00', special_club: false, badge_filename: 'coritiba.svg' },
+  { name: 'Coritiba', abbreviation: 'CFC', primary_color: '#00FF00', special_club: false, badge_filename: 'coritiba.png' },
   { name: 'Cruzeiro', abbreviation: 'CRU', primary_color: '#0000FF', special_club: false, badge_filename: 'cruzeiro.png' },
-  { name: 'Flamengo', abbreviation: 'FLA', primary_color: '#FF0000', special_club: false, badge_filename: 'flamengo.svg' },
-  { name: 'Fluminense', abbreviation: 'FLU', primary_color: '#8B0000', special_club: false, badge_filename: 'fluminense.svg' },
-  { name: 'Grêmio', abbreviation: 'GRE', primary_color: '#0000FF', special_club: false, badge_filename: 'gremio.svg' },
-  { name: 'Internacional', abbreviation: 'INT', primary_color: '#FF0000', special_club: false, badge_filename: 'internacional.svg' },
+  { name: 'Flamengo', abbreviation: 'FLA', primary_color: '#FF0000', special_club: false, badge_filename: 'flamengo.png' },
+  { name: 'Fluminense', abbreviation: 'FLU', primary_color: '#8B0000', special_club: false, badge_filename: 'fluminense.png' },
+  { name: 'Grêmio', abbreviation: 'GRE', primary_color: '#0000FF', special_club: false, badge_filename: 'gremio.png' },
+  { name: 'Internacional', abbreviation: 'INT', primary_color: '#FF0000', special_club: false, badge_filename: 'internacional.png' },
   { name: 'Mirassol', abbreviation: 'MIR', primary_color: '#FFFF00', special_club: false, badge_filename: 'mirassol.png' },
   { name: 'Palmeiras', abbreviation: 'PAL', primary_color: '#008000', special_club: false, badge_filename: 'palmeiras.png' },
   { name: 'Red Bull Bragantino', abbreviation: 'RBB', primary_color: '#FFFFFF', special_club: false, badge_filename: 'red-bull-bragantino.png' },
-  { name: 'Remo', abbreviation: 'REM', primary_color: '#0000FF', special_club: true, badge_filename: 'remo.svg' },
+  { name: 'Remo', abbreviation: 'REM', primary_color: '#0000FF', special_club: true, badge_filename: 'remo.png' },
   { name: 'Santos', abbreviation: 'SAN', primary_color: '#FFFFFF', special_club: false, badge_filename: 'santos.png' },
-  { name: 'São Paulo', abbreviation: 'SAO', primary_color: '#FF0000', special_club: false, badge_filename: 'sao-paulo.svg' },
-  { name: 'Vasco da Gama', abbreviation: 'VAS', primary_color: '#000000', special_club: false, badge_filename: 'vasco-da-gama.svg' },
-  { name: 'Vitória', abbreviation: 'VIT', primary_color: '#FF0000', special_club: false, badge_filename: 'vitoria.svg' }
+  { name: 'São Paulo', abbreviation: 'SAO', primary_color: '#FF0000', special_club: false, badge_filename: 'sao-paulo.png' },
+  { name: 'Vasco da Gama', abbreviation: 'VAS', primary_color: '#000000', special_club: false, badge_filename: 'vasco-da-gama.png' },
+  { name: 'Vitória', abbreviation: 'VIT', primary_color: '#FF0000', special_club: false, badge_filename: 'vitoria.png' }
 ]
 
 clubs_data.each { |c| Club.create!(c) }
@@ -63,17 +63,13 @@ clubs_serie_a.each_with_index do |name, i|
 end
 puts "✓ 20 clubes adicionados"
 
-# Definir Remo como clube favorito
-remo = Club.find_by(name: 'Remo')
-championship_2026.update!(favorite_club: remo)
-puts "✓ Remo definido como clube favorito"
-
 championship_2026.update!(active: true)
 38.times { |i| championship_2026.rounds.create!(number: i + 1) }
 puts "✓ 38 rodadas criadas"
 
 round1 = championship_2026.rounds.first
 clubs = championship_2026.clubs.where.not(name: 'Remo').to_a.shuffle
+remo = championship_2026.clubs.find_by(name: 'Remo')
 
 Match.create!(round: round1, home_club: remo, away_club: clubs.pop, scheduled_at: DateTime.new(2026, 4, 10, 19, 0))
 9.times { |i| Match.create!(round: round1, home_club: clubs.pop, away_club: clubs.pop, scheduled_at: DateTime.new(2026, 4, 10 + i/3, 19 + i%3, 0)) }

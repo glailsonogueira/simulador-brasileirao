@@ -4,71 +4,31 @@ class Match < ApplicationRecord
   belongs_to :away_club, class_name: 'Club'
   has_many :predictions, dependent: :destroy
   
-  validates :scheduled_at, presence: true
-  validate :clubs_must_be_different
-  validate :clubs_must_be_in_championship
+  validates :home_club_id, uniqueness: { scope: [:round_id, :away_club_id] }
+  validate :different_clubs
   
-  scope :finished, -> { where(finished: true) }
-  scope :pending, -> { where(finished: false) }
-  scope :ordered_by_date, -> { order(:scheduled_at) }
+  scope :finished_matches, -> { where(finished: true) }
+  scope :unfinished_matches, -> { where(finished: false) }
   
-  def result_set?
-    home_score.present? && away_score.present?
+  def involves_favorite?
+    championship = round.championship
+    return false unless championship.favorite_club_id.present?
+    home_club_id == championship.favorite_club_id || away_club_id == championship.favorite_club_id
   end
   
-  def involves_special_club?
-    home_club.special_club? || away_club.special_club?
+  def can_predict?
+    scheduled_at.present? && Time.current < (scheduled_at - 1.hour) && !finished?
   end
   
-  def involves_remo?
-    involves_special_club?
-  end
-  
-  def remo_is_home?
-    home_club.special_club?
-  end
-  
-  def remo_is_away?
-    away_club.special_club?
-  end
-  
-  def match_result
-    return nil unless result_set?
-    return :home_win if home_score > away_score
-    return :away_win if away_score > home_score
-    :draw
-  end
-  
-  def open_for_predictions?
-    scheduled_at - 1.hour > Time.current
-  end
-  
-  def formatted_datetime
-    scheduled_at.strftime("%d/%m/%Y às %H:%M")
-  end
-  
-  def short_datetime
-    scheduled_at.strftime("%d/%m %H:%M")
+  def locked?
+    scheduled_at.present? && Time.current >= (scheduled_at - 1.hour)
   end
   
   private
   
-  def clubs_must_be_different
+  def different_clubs
     if home_club_id == away_club_id
-      errors.add(:base, "Um clube não pode jogar contra si mesmo")
-    end
-  end
-  
-  def clubs_must_be_in_championship
-    return unless round&.championship
-    championship_club_ids = round.championship.club_ids
-    
-    unless championship_club_ids.include?(home_club_id)
-      errors.add(:home_club, "não está participando deste campeonato")
-    end
-    
-    unless championship_club_ids.include?(away_club_id)
-      errors.add(:away_club, "não está participando deste campeonato")
+      errors.add(:base, "Mandante e visitante devem ser clubes diferentes")
     end
   end
 end

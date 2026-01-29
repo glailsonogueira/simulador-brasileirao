@@ -1,53 +1,56 @@
 <% content_for :title, "Campeonatos" %>
-<%= breadcrumb ["Início", root_path], ["Admin", admin_championships_path], "Campeonatos" %>
+<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], "Campeonatos" %>
 
-<h1>Admin - Campeonatos</h1>
-
-<%= link_to "← Voltar", root_path, class: "btn", style: "margin-bottom: 20px;" %>
-<%= link_to "+ Novo Campeonato", new_admin_championship_path, class: "btn", style: "margin-bottom: 20px; background: #28a745;" %>
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Campeonatos</h1>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", root_path, class: "btn", style: "margin: 0 5px;" %>
+    <%= link_to "+ Novo Campeonato", new_admin_championship_path, class: "btn", style: "margin: 0 5px; background: #28a745;" %>
+  </div>
+</div>
 
 <div class="card">
   <table>
     <thead>
       <tr>
-        <th>Ano</th>
-        <th>Nome</th>
-        <th>Status</th>
-        <th>Data Início</th>
-        <th>Data Fim</th>
-        <th>Clubes</th>
-        <th>Rodadas</th>
-        <th>Ações</th>
+        <th style="text-align: center;">Ano</th>
+        <th style="text-align: center;">Nome</th>
+        <th style="text-align: center;">Status</th>
+        <th style="text-align: center;">Data Inicio</th>
+        <th style="text-align: center;">Data Fim</th>
+        <th style="text-align: center;">Clubes</th>
+        <th style="text-align: center;">Rodadas</th>
+        <th style="text-align: center;">Acoes</th>
       </tr>
     </thead>
     <tbody>
       <% @championships.each do |championship| %>
         <tr>
-          <td><strong><%= championship.year %></strong></td>
-          <td><%= championship.name %></td>
-          <td>
+          <td style="text-align: center;"><strong><%= championship.year %></strong></td>
+          <td style="text-align: center;"><%= championship.name %></td>
+          <td style="text-align: center;">
             <% if championship.active? %>
-              <span style="color: #28a745; font-weight: bold;">✓ Ativo</span>
+              <span style="color: #28a745; font-weight: bold;">Ativo</span>
             <% else %>
               <span style="color: #999;">Inativo</span>
             <% end %>
           </td>
-          <td><%= championship.start_date&.strftime("%d/%m/%Y") %></td>
-          <td><%= championship.end_date&.strftime("%d/%m/%Y") %></td>
-          <td><%= championship.clubs_count %>/20</td>
-          <td><%= championship.rounds.count %></td>
-          <td>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <%= link_to admin_championship_path(championship), style: "display: inline-flex; padding: 5px;" do %>
-                <img src="/view-icon.png" alt="Visualizar" style="width: 28px; height: 28px;">
+          <td style="text-align: center;"><%= championship.start_date&.strftime("%d/%m/%Y") %></td>
+          <td style="text-align: center;"><%= championship.end_date&.strftime("%d/%m/%Y") %></td>
+          <td style="text-align: center;"><%= championship.clubs_count %>/20</td>
+          <td style="text-align: center;"><%= championship.rounds.count %></td>
+          <td style="text-align: center;">
+            <div style="display: flex; gap: 10px; align-items: center; justify-content: center;">
+              <%= link_to admin_championship_path(championship), style: "text-decoration: none;", title: "Visualizar" do %>
+                <img src="/view-icon.png" alt="Visualizar" style="width: 24px; height: 24px;">
               <% end %>
               
-              <%= link_to edit_admin_championship_path(championship), style: "display: inline-flex; padding: 5px;" do %>
-                <img src="/pen-icon.png" alt="Editar" style="width: 28px; height: 28px;">
+              <%= link_to edit_admin_championship_path(championship), style: "text-decoration: none;", title: "Editar" do %>
+                <img src="/pen-icon.png" alt="Editar" style="width: 24px; height: 24px;">
               <% end %>
               
-              <%= button_to admin_championship_path(championship), method: :delete, data: { confirm: "Excluir #{championship.full_name}?" }, style: "background: transparent; border: none; cursor: pointer; padding: 5px; display: inline-flex;" do %>
-                <img src="/bin-icon.png" alt="Excluir" style="width: 28px; height: 28px;">
+              <%= button_to admin_championship_path(championship), method: :delete, data: { confirm: "Excluir #{championship.full_name}?" }, style: "background: transparent; border: none; cursor: pointer; padding: 0;", title: "Excluir" do %>
+                <img src="/bin-icon.png" alt="Excluir" style="width: 24px; height: 24px;">
               <% end %>
             </div>
           </td>

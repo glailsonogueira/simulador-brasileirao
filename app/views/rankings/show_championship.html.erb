@@ -1,0 +1,73 @@
+<% content_for :title, "Rankings" %>
+<%= breadcrumb ["Inicio", root_path], ["Rankings", rankings_path], @championship.full_name %>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Rankings</h1>
+  <p style="font-size: 18px; color: #666; margin-top: 10px;">
+    <strong><%= @championship.full_name %></strong>
+  </p>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", rankings_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="text-align: center; margin-bottom: 20px;">Classificacao Geral</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align: center;">Posicao</th>
+        <th style="text-align: center;">Usuario</th>
+        <th style="text-align: center;">Pontos</th>
+        <th style="text-align: center;">Acoes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @overall_standings.each_with_index do |standing, index| %>
+        <tr>
+          <td style="text-align: center;"><strong><%= index + 1 %>°</strong></td>
+          <td style="text-align: center;"><%= standing.user.name %></td>
+          <td style="text-align: center;"><strong><%= standing.total_points %></strong></td>
+          <td style="text-align: center;">
+            <%= link_to user_detail_rankings_path(standing.user.id), style: "text-decoration: none; font-size: 24px;", title: "Detalhes" do %>
+              &#128200;
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2 style="text-align: center; margin-bottom: 20px;">Rankings por Rodada</h2>
+  
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <% @rounds.each do |round| %>
+      <div class="card" style="background: #f8f9fa; padding: 15px; text-align: center;">
+        <h3 style="color: #000080; margin-bottom: 15px;">Rodada <%= round.number %></h3>
+        
+        <% top3 = round.round_scores.order(position: :asc).limit(3) %>
+        <% if top3.any? %>
+          <div style="margin-bottom: 15px; font-size: 12px;">
+            <% top3.each_with_index do |score, index| %>
+              <div style="padding: 5px; border-bottom: 1px solid #ddd;">
+                <span style="font-size: 18px;">
+                  <%= raw(index == 0 ? '&#129351;' : index == 1 ? '&#129352;' : '&#129353;') %>
+                </span>
+                <strong><%= score.user.name %></strong>
+                (<%= score.total_points %>pts)
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p style="color: #999; font-size: 12px; margin-bottom: 15px;">Sem pontuacao</p>
+        <% end %>
+        
+        <%= link_to round_rankings_path(round_id: round.id), class: "btn", style: "width: 100%; padding: 8px; font-size: 14px;" do %>
+          Ver Ranking Completo
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

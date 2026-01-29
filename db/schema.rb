@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_28_015256) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_29_022011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,7 +61,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_28_015256) do
     t.date "end_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "favorite_club_id"
     t.index ["active"], name: "index_championships_on_active"
+    t.index ["favorite_club_id"], name: "index_championships_on_favorite_club_id"
     t.index ["year"], name: "index_championships_on_year", unique: true
   end
 
@@ -119,7 +121,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_28_015256) do
     t.integer "away_score", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "predicted_at"
+    t.boolean "locked", default: false
     t.index ["match_id"], name: "index_predictions_on_match_id"
+    t.index ["predicted_at"], name: "index_predictions_on_predicted_at"
     t.index ["user_id", "match_id"], name: "index_predictions_on_user_id_and_match_id", unique: true
     t.index ["user_id"], name: "index_predictions_on_user_id"
   end
@@ -172,6 +177,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_28_015256) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "championship_clubs", "championships"
   add_foreign_key "championship_clubs", "clubs"
+  add_foreign_key "championships", "clubs", column: "favorite_club_id"
   add_foreign_key "matches", "clubs", column: "away_club_id"
   add_foreign_key "matches", "clubs", column: "home_club_id"
   add_foreign_key "matches", "rounds"

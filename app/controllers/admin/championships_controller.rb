@@ -98,7 +98,7 @@ module Admin
     end
     
     def championship_params
-      params.require(:championship).permit(:year, :name, :active, :start_date, :end_date)
+      params.require(:championship).permit(:year, :name, :active, :start_date, :end_date, :favorite_club_id)
     end
   end
 end

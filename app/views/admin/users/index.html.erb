@@ -1,4 +1,121 @@
-<% content_for :title, "Usuarios" %>
+<% content_for :title, "Usuários" %>
+<%= breadcrumb ["Início", root_path], ["Admin", admin_championships_path], "Usuários" %>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Usuários</h1>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", admin_championships_path, class: "btn", style: "margin: 0 5px;" %>
+  </div>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th>Avatar</th>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Tipo de Login</th>
+        <th>Status</th>
+        <th>Admin</th>
+        <th>Cadastro</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr style="<%= 'opacity: 0.5;' unless user.active? %>">
+          <td>
+            <% if user.avatar_url.present? %>
+              <%= image_tag user.avatar_url, style: "width: 40px; height: 40px; border-radius: 50%;" %>
+            <% else %>
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: #ccc; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                <%= user.name[0].upcase %>
+              </div>
+            <% end %>
+          </td>
+          <td><strong><%= user.name %></strong></td>
+          <td><%= user.email %></td>
+          <td>
+            <% if user.provider.present? %>
+              <span style="color: #db4437;">Google OAuth</span>
+            <% else %>
+              <span style="color: #666;">Email/Senha</span>
+            <% end %>
+          </td>
+          <td>
+            <% if user.active? %>
+              <span style="color: #28a745; font-weight: bold;">✓ Ativo</span>
+            <% else %>
+              <span style="color: #dc3545; font-weight: bold;">✗ Desativado</span>
+            <% end %>
+          </td>
+          <td>
+            <% if user.admin? %>
+              <span style="color: #28a745; font-weight: bold;">✓ Admin</span>
+            <% else %>
+              <span style="color: #999;">Usuário</span>
+            <% end %>
+          </td>
+          <td><%= user.created_at.strftime("%d/%m/%Y") %></td>
+          <td>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <%= button_to toggle_active_admin_user_path(user), 
+                  method: :patch,
+                  data: { confirm: "#{user.active? ? 'Desativar' : 'Ativar'} #{user.name}?" },
+                  style: "background: transparent; border: none; cursor: pointer; padding: 5px; display: inline-flex;",
+                  title: user.active? ? "Desativar" : "Ativar" do %>
+                <span style="font-size: 24px;"><%= user.active? ? '🔒' : '🔓' %></span>
+              <% end %>
+              
+              <%= button_to toggle_admin_admin_user_path(user), 
+                  method: :patch,
+                  data: { confirm: "#{user.admin? ? 'Remover admin de' : 'Tornar admin'} #{user.name}?" },
+                  style: "background: transparent; border: none; cursor: pointer; padding: 5px; display: inline-flex;",
+                  title: user.admin? ? "Remover Admin" : "Tornar Admin" do %>
+                <span style="font-size: 24px;"><%= user.admin? ? '👤' : '⭐' %></span>
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3 style="text-align: center; margin-bottom: 20px;">Estatísticas</h3>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center;">
+    <div>
+      <p style="color: #666; font-size: 14px;">Total de Usuários</p>
+      <p style="font-size: 32px; font-weight: bold; color: #000080;"><%= @users.count %></p>
+    </div>
+    <div>
+      <p style="color: #666; font-size: 14px;">Usuários Ativos</p>
+      <p style="font-size: 32px; font-weight: bold; color: #28a745;"><%= @users.active_users.count %></p>
+    </div>
+    <div>
+      <p style="color: #666; font-size: 14px;">Usuários Desativados</p>
+      <p style="font-size: 32px; font-weight: bold; color: #dc3545;"><%= @users.inactive_users.count %></p>
+    </div>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; margin-top: 20px;">
+    <div>
+      <p style="color: #666; font-size: 14px;">Administradores</p>
+      <p style="font-size: 32px; font-weight: bold; color: #ffc107;"><%= @users.where(admin: true).count %></p>
+    </div>
+    <div>
+      <p style="color: #666; font-size: 14px;">Login com Google</p>
+      <p style="font-size: 32px; font-weight: bold; color: #db4437;"><%= @users.where.not(provider: nil).count %></p>
+    </div>
+    <div>
+      <p style="color: #666; font-size: 14px;">Login com Email/Senha</p>
+      <p style="font-size: 32px; font-weight: bold; color: #666;"><%= @users.where(provider: nil).count %></p>
+    </div>
+  </div>
+</div>
+
+=begin <% content_for :title, "Usuarios" %>
 <%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], "Usuarios" %>
 
 <h1>Admin - Usuarios</h1>
@@ -111,3 +228,4 @@
     </div>
   </div>
 </div>
+ =end
