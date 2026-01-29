@@ -1,9 +1,13 @@
 class Club < ApplicationRecord
   has_one_attached :badge
+  belongs_to :primary_stadium, class_name: 'Stadium', optional: true
+  
   has_many :home_matches, class_name: 'Match', foreign_key: 'home_club_id', dependent: :destroy
   has_many :away_matches, class_name: 'Match', foreign_key: 'away_club_id', dependent: :destroy
   has_many :championship_clubs, dependent: :destroy
   has_many :championships, through: :championship_clubs
+  has_many :club_stadiums, dependent: :destroy
+  has_many :stadiums, through: :club_stadiums
   
   validates :name, presence: true, uniqueness: true
   validates :abbreviation, presence: true, length: { maximum: 3 }

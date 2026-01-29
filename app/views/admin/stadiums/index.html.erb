@@ -1,0 +1,47 @@
+<% content_for :title, "Estadios" %>
+<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], "Estadios" %>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Estadios</h1>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", root_path, class: "btn", style: "margin: 0 5px;" %>
+    <%= link_to "+ Novo Estadio", new_admin_stadium_path, class: "btn", style: "margin: 0 5px; background: #28a745;" %>
+  </div>
+</div>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align: center;">Nome</th>
+        <th style="text-align: center;">Cidade</th>
+        <th style="text-align: center;">UF</th>
+        <th style="text-align: center;">Clubes</th>
+        <th style="text-align: center;">Partidas</th>
+        <th style="text-align: center;">Acoes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @stadiums.each do |stadium| %>
+        <tr>
+          <td style="text-align: center;"><strong><%= stadium.name %></strong></td>
+          <td style="text-align: center;"><%= stadium.city %></td>
+          <td style="text-align: center;"><%= stadium.state %></td>
+          <td style="text-align: center;"><%= stadium.clubs_as_primary.count %></td>
+          <td style="text-align: center;"><%= stadium.matches.count %></td>
+          <td style="text-align: center;">
+            <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
+              <%= link_to edit_admin_stadium_path(stadium), style: "text-decoration: none; font-size: 24px;", title: "Editar" do %>
+                &#9998;
+              <% end %>
+              
+              <%= button_to admin_stadium_path(stadium), method: :delete, data: { confirm: "Excluir #{stadium.name}?" }, style: "background: transparent; border: none; cursor: pointer; padding: 0; font-size: 24px;", title: "Excluir" do %>
+                &#128465;
+              <% end %>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

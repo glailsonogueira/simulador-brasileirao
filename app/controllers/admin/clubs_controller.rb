@@ -57,6 +57,6 @@ class Admin::ClubsController < ApplicationController
   end
 
   def club_params
-    params.require(:club).permit(:name, :abbreviation, :primary_color, :badge, :special_club)
+    params.require(:club).permit(:name, :abbreviation, :primary_color, :badge, :special_club, :primary_stadium_id, stadium_ids: [])
   end
 end

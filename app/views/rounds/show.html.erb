@@ -17,6 +17,7 @@
       <thead>
         <tr>
           <th>Data/Hora</th>
+          <th>Estadio</th>
           <th style="text-align: right;">Mandante</th>
           <th style="text-align: center;">Sua Previsao</th>
           <th>Visitante</th>
@@ -30,13 +31,24 @@
         <% @matches.each do |match| %>
           <% can_predict = match.can_predict? %>
           <% is_locked = match.locked? %>
+          <% is_favorite_home = @championship.favorite_club_id.present? && match.home_club_id == @championship.favorite_club_id %>
+          <% is_favorite_away = @championship.favorite_club_id.present? && match.away_club_id == @championship.favorite_club_id %>
           <tr style="<%= 'opacity: 0.6;' if is_locked %>">
             <td><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
+            
+            <td>
+              <% if match.stadium %>
+                <strong><%= match.stadium.name %></strong><br>
+                <small style="color: #666;"><%= match.stadium.full_location %></small>
+              <% else %>
+                <span style="color: #999;">-</span>
+              <% end %>
+            </td>
             
             <td style="text-align: right;">
               <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
                 <strong><%= match.home_club.name %></strong>
-                <% if match.involves_favorite? %>
+                <% if is_favorite_home %>
                   <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
                 <% end %>
                 <% if match.home_club.badge_url %>
@@ -71,7 +83,7 @@
                 <% else %>
                   <div style="width: 30px; height: 30px; background: <%= match.away_club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
                 <% end %>
-                <% if match.involves_favorite? %>
+                <% if is_favorite_away %>
                   <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
                 <% end %>
                 <strong><%= match.away_club.name %></strong>

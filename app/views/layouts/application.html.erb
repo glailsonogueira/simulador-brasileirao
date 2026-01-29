@@ -89,24 +89,6 @@
       th { background: #f8f9fa; font-weight: bold; }
       .card { background: white; padding: 20px; margin: 20px 0; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
     </style>
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const flashes = document.querySelectorAll('.flash');
-        flashes.forEach(flash => {
-          setTimeout(() => {
-            flash.style.transition = 'opacity 0.5s ease-out';
-            flash.style.opacity = '0';
-            setTimeout(() => flash.remove(), 500);
-          }, 5000);
-        });
-      });
-      
-      function closeFlash(element) {
-        element.parentElement.style.transition = 'opacity 0.3s ease-out';
-        element.parentElement.style.opacity = '0';
-        setTimeout(() => element.parentElement.remove(), 300);
-      }
-    </script>
   </head>
   <body>
     <nav>
@@ -125,7 +107,7 @@
             
             <% if current_user.admin? %>
               <div class="dropdown">
-                <span class="dropdown-toggle">Admin &#128317;</span>
+                <span class="dropdown-toggle">Admin <span style="color: white;">&#8595;</span></span>
                 <div class="dropdown-menu">
                   <%= link_to "Campeonatos", admin_championships_path %>
                   <%= link_to "Clubes", admin_clubs_path %>
@@ -149,19 +131,45 @@
 
     <div class="container">
       <% if flash[:notice] %>
-        <div class="flash notice">
+        <div class="flash notice" data-controller="flash">
           <%= flash[:notice] %>
-          <button onclick="closeFlash(this)" class="flash-close">&times;</button>
+          <button onclick="this.parentElement.remove()" class="flash-close">&times;</button>
         </div>
       <% end %>
       <% if flash[:alert] %>
-        <div class="flash alert">
+        <div class="flash alert" data-controller="flash">
           <%= flash[:alert] %>
-          <button onclick="closeFlash(this)" class="flash-close">&times;</button>
+          <button onclick="this.parentElement.remove()" class="flash-close">&times;</button>
         </div>
       <% end %>
 
       <%= yield %>
     </div>
+
+    <script>
+      (function() {
+        function setupFlashMessages() {
+          const flashes = document.querySelectorAll('.flash');
+          flashes.forEach(flash => {
+            // Auto-fechar após 5 segundos
+            setTimeout(() => {
+              flash.style.transition = 'opacity 0.5s ease-out';
+              flash.style.opacity = '0';
+              setTimeout(() => {
+                if (flash.parentElement) {
+                  flash.remove();
+                }
+              }, 500);
+            }, 5000);
+          });
+        }
+
+        // Executar ao carregar a página
+        setupFlashMessages();
+
+        // Executar após navegação Turbo
+        document.addEventListener('turbo:load', setupFlashMessages);
+      })();
+    </script>
   </body>
 </html>

@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     end
     
     resources :clubs
+    resources :stadiums
     
     resources :users do
       member do

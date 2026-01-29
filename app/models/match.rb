@@ -2,10 +2,13 @@ class Match < ApplicationRecord
   belongs_to :round
   belongs_to :home_club, class_name: 'Club'
   belongs_to :away_club, class_name: 'Club'
+  belongs_to :stadium, optional: true
   has_many :predictions, dependent: :destroy
   
   validates :home_club_id, uniqueness: { scope: [:round_id, :away_club_id] }
   validate :different_clubs
+  
+  before_validation :set_stadium_from_home_club, on: :create
   
   scope :finished_matches, -> { where(finished: true) }
   scope :unfinished_matches, -> { where(finished: false) }
@@ -30,5 +33,9 @@ class Match < ApplicationRecord
     if home_club_id == away_club_id
       errors.add(:base, "Mandante e visitante devem ser clubes diferentes")
     end
+  end
+  
+  def set_stadium_from_home_club
+    self.stadium_id ||= home_club.primary_stadium_id if home_club&.primary_stadium_id.present?
   end
 end

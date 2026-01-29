@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_29_022011) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_29_152701) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -67,6 +67,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_29_022011) do
     t.index ["year"], name: "index_championships_on_year", unique: true
   end
 
+  create_table "club_stadiums", force: :cascade do |t|
+    t.bigint "club_id", null: false
+    t.bigint "stadium_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["club_id", "stadium_id"], name: "index_club_stadiums_on_club_id_and_stadium_id", unique: true
+    t.index ["club_id"], name: "index_club_stadiums_on_club_id"
+  end
+
   create_table "clubs", force: :cascade do |t|
     t.string "name", null: false
     t.string "abbreviation", limit: 3, null: false
@@ -75,8 +84,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_29_022011) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "badge_filename"
+    t.bigint "primary_stadium_id"
     t.index ["abbreviation"], name: "index_clubs_on_abbreviation", unique: true
     t.index ["name"], name: "index_clubs_on_name", unique: true
+    t.index ["primary_stadium_id"], name: "index_clubs_on_primary_stadium_id"
     t.index ["special_club"], name: "index_clubs_on_special_club"
   end
 
@@ -90,12 +101,14 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_29_022011) do
     t.boolean "finished", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "stadium_id"
     t.index ["away_club_id"], name: "index_matches_on_away_club_id"
     t.index ["finished"], name: "index_matches_on_finished"
     t.index ["home_club_id"], name: "index_matches_on_home_club_id"
     t.index ["round_id", "home_club_id", "away_club_id"], name: "index_matches_on_round_and_clubs", unique: true
     t.index ["round_id"], name: "index_matches_on_round_id"
     t.index ["scheduled_at"], name: "index_matches_on_scheduled_at"
+    t.index ["stadium_id"], name: "index_matches_on_stadium_id"
   end
 
   create_table "overall_standings", force: :cascade do |t|
@@ -157,6 +170,16 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_29_022011) do
     t.index ["number"], name: "index_rounds_on_number", unique: true
   end
 
+  create_table "stadiums", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "city", null: false
+    t.string "state", limit: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city", "state"], name: "index_stadiums_on_city_and_state"
+    t.index ["name"], name: "index_stadiums_on_name"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
@@ -178,9 +201,13 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_29_022011) do
   add_foreign_key "championship_clubs", "championships"
   add_foreign_key "championship_clubs", "clubs"
   add_foreign_key "championships", "clubs", column: "favorite_club_id"
+  add_foreign_key "club_stadiums", "clubs"
+  add_foreign_key "club_stadiums", "stadiums"
+  add_foreign_key "clubs", "stadiums", column: "primary_stadium_id"
   add_foreign_key "matches", "clubs", column: "away_club_id"
   add_foreign_key "matches", "clubs", column: "home_club_id"
   add_foreign_key "matches", "rounds"
+  add_foreign_key "matches", "stadiums"
   add_foreign_key "overall_standings", "championships"
   add_foreign_key "overall_standings", "users"
   add_foreign_key "predictions", "matches"

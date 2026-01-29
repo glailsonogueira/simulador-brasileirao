@@ -56,3 +56,4 @@ gem "omniauth-rails_csrf_protection", "~> 1.0"
 
 # Variáveis de ambiente
 gem 'dotenv-rails', groups: [:development, :test]
+gem "roo"

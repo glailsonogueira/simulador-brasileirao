@@ -1,0 +1,42 @@
+<% content_for :title, "Novo Estadio" %>
+<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], ["Estadios", admin_stadiums_path], "Novo" %>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Novo Estadio</h1>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", admin_stadiums_path, class: "btn" %>
+  </div>
+</div>
+
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+  <%= form_with model: @stadium, url: admin_stadiums_path, local: true do |f| %>
+    <% if @stadium.errors.any? %>
+      <div style="background: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+        <h4>Erros:</h4>
+        <ul>
+          <% @stadium.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :name, "Nome do Estadio:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+      <%= f.text_field :name, required: true, placeholder: "Ex: Arena da Amazonia", style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :city, "Cidade:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+      <%= f.text_field :city, required: true, placeholder: "Ex: Manaus", style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+      <%= f.label :state, "UF:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+      <%= f.text_field :state, required: true, maxlength: 2, placeholder: "Ex: AM", style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; text-transform: uppercase;" %>
+      <small style="color: #666;">Sigla do estado (2 caracteres)</small>
+    </div>
+
+    <%= f.submit "Criar Estadio", class: "btn", style: "width: 100%; padding: 15px; font-size: 16px; background: #28a745;" %>
+  <% end %>
+</div>

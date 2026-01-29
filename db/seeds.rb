@@ -1,6 +1,8 @@
 # encoding: utf-8
+require 'roo'
+
 puts "Limpando banco de dados..."
-[Prediction, RoundScore, OverallStanding, Match, Round, ChampionshipClub, Championship, Club, User].each(&:destroy_all)
+[Prediction, RoundScore, OverallStanding, Match, Round, Championship, ChampionshipClub, ClubStadium, Club, Stadium, User].each(&:destroy_all)
 puts "✓ Banco limpo"
 
 User.create!(
@@ -13,31 +15,67 @@ User.create!(
 )
 puts "✓ Usuário admin criado"
 
-clubs_data = [
-  { name: 'Athletico Paranaense', abbreviation: 'CAP', primary_color: '#FF0000', special_club: false, badge_filename: 'athletico-paranaense.svg' },
-  { name: 'Atlético Mineiro', abbreviation: 'CAM', primary_color: '#000000', special_club: false, badge_filename: 'atletico-mineiro.svg' },
-  { name: 'Bahia', abbreviation: 'BAH', primary_color: '#0000FF', special_club: false, badge_filename: 'bahia.svg' },
-  { name: 'Botafogo', abbreviation: 'BOT', primary_color: '#000000', special_club: false, badge_filename: 'botafogo.svg' },
-  { name: 'Chapecoense', abbreviation: 'CHA', primary_color: '#008000', special_club: false, badge_filename: 'chapecoense.png' },
-  { name: 'Corinthians', abbreviation: 'COR', primary_color: '#000000', special_club: false, badge_filename: 'corinthians.png' },
-  { name: 'Coritiba', abbreviation: 'CFC', primary_color: '#00FF00', special_club: false, badge_filename: 'coritiba.svg' },
-  { name: 'Cruzeiro', abbreviation: 'CRU', primary_color: '#0000FF', special_club: false, badge_filename: 'cruzeiro.png' },
-  { name: 'Flamengo', abbreviation: 'FLA', primary_color: '#FF0000', special_club: false, badge_filename: 'flamengo.svg' },
-  { name: 'Fluminense', abbreviation: 'FLU', primary_color: '#8B0000', special_club: false, badge_filename: 'fluminense.svg' },
-  { name: 'Grêmio', abbreviation: 'GRE', primary_color: '#0000FF', special_club: false, badge_filename: 'gremio.svg' },
-  { name: 'Internacional', abbreviation: 'INT', primary_color: '#FF0000', special_club: false, badge_filename: 'internacional.svg' },
-  { name: 'Mirassol', abbreviation: 'MIR', primary_color: '#FFFF00', special_club: false, badge_filename: 'mirassol.png' },
-  { name: 'Palmeiras', abbreviation: 'PAL', primary_color: '#008000', special_club: false, badge_filename: 'palmeiras.png' },
-  { name: 'Red Bull Bragantino', abbreviation: 'RBB', primary_color: '#FFFFFF', special_club: false, badge_filename: 'red-bull-bragantino.png' },
-  { name: 'Remo', abbreviation: 'REM', primary_color: '#0000FF', special_club: true, badge_filename: 'remo.svg' },
-  { name: 'Santos', abbreviation: 'SAN', primary_color: '#FFFFFF', special_club: false, badge_filename: 'santos.png' },
-  { name: 'São Paulo', abbreviation: 'SAO', primary_color: '#FF0000', special_club: false, badge_filename: 'sao-paulo.svg' },
-  { name: 'Vasco da Gama', abbreviation: 'VAS', primary_color: '#000000', special_club: false, badge_filename: 'vasco-da-gama.svg' },
-  { name: 'Vitória', abbreviation: 'VIT', primary_color: '#FF0000', special_club: false, badge_filename: 'vitoria.svg' }
+# Criar estádios
+stadiums_data = [
+  { name: 'Arena da Baixada', city: 'Curitiba', state: 'PR' },
+  { name: 'Arena MRV', city: 'Belo Horizonte', state: 'MG' },
+  { name: 'Arena Fonte Nova', city: 'Salvador', state: 'BA' },
+  { name: 'Estádio Nilton Santos', city: 'Rio de Janeiro', state: 'RJ' },
+  { name: 'Arena Condá', city: 'Chapecó', state: 'SC' },
+  { name: 'Neo Química Arena', city: 'São Paulo', state: 'SP' },
+  { name: 'Couto Pereira', city: 'Curitiba', state: 'PR' },
+  { name: 'Mineirão', city: 'Belo Horizonte', state: 'MG' },
+  { name: 'Maracanã', city: 'Rio de Janeiro', state: 'RJ' },
+  { name: 'Arena do Grêmio', city: 'Porto Alegre', state: 'RS' },
+  { name: 'Beira-Rio', city: 'Porto Alegre', state: 'RS' },
+  { name: 'Estádio José Maria de Campos Maia', city: 'Mirassol', state: 'SP' },
+  { name: 'Allianz Parque', city: 'São Paulo', state: 'SP' },
+  { name: 'Nabi Abi Chedid', city: 'Bragança Paulista', state: 'SP' },
+  { name: 'Mangueirão', city: 'Belém', state: 'PA' },
+  { name: 'Baenão', city: 'Belém', state: 'PA' },
+  { name: 'Vila Belmiro', city: 'Santos', state: 'SP' },
+  { name: 'Morumbi', city: 'São Paulo', state: 'SP' },
+  { name: 'São Januário', city: 'Rio de Janeiro', state: 'RJ' },
+  { name: 'Barradão', city: 'Salvador', state: 'BA' }
 ]
 
-clubs_data.each { |c| Club.create!(c) }
-puts "✓ #{Club.count} clubes criados"
+stadiums_data.each { |s| Stadium.create!(s) }
+puts "✓ #{Stadium.count} estádios criados"
+
+clubs_data = [
+  { name: 'Athletico Paranaense', abbreviation: 'CAP', primary_color: '#FF0000', special_club: false, badge_filename: 'athletico-paranaense.svg', primary_stadium: 'Arena da Baixada' },
+  { name: 'Atlético Mineiro', abbreviation: 'CAM', primary_color: '#000000', special_club: false, badge_filename: 'atletico-mineiro.svg', primary_stadium: 'Arena MRV' },
+  { name: 'Bahia', abbreviation: 'BAH', primary_color: '#0000FF', special_club: false, badge_filename: 'bahia.svg', primary_stadium: 'Arena Fonte Nova' },
+  { name: 'Botafogo', abbreviation: 'BOT', primary_color: '#000000', special_club: false, badge_filename: 'botafogo.svg', primary_stadium: 'Estádio Nilton Santos' },
+  { name: 'Chapecoense', abbreviation: 'CHA', primary_color: '#008000', special_club: false, badge_filename: 'chapecoense.png', primary_stadium: 'Arena Condá' },
+  { name: 'Corinthians', abbreviation: 'COR', primary_color: '#000000', special_club: false, badge_filename: 'corinthians.png', primary_stadium: 'Neo Química Arena' },
+  { name: 'Coritiba', abbreviation: 'CFC', primary_color: '#00FF00', special_club: false, badge_filename: 'coritiba.svg', primary_stadium: 'Couto Pereira' },
+  { name: 'Cruzeiro', abbreviation: 'CRU', primary_color: '#0000FF', special_club: false, badge_filename: 'cruzeiro.png', primary_stadium: 'Mineirão' },
+  { name: 'Flamengo', abbreviation: 'FLA', primary_color: '#FF0000', special_club: false, badge_filename: 'flamengo.svg', primary_stadium: 'Maracanã' },
+  { name: 'Fluminense', abbreviation: 'FLU', primary_color: '#8B0000', special_club: false, badge_filename: 'fluminense.svg', primary_stadium: 'Maracanã' },
+  { name: 'Grêmio', abbreviation: 'GRE', primary_color: '#0000FF', special_club: false, badge_filename: 'gremio.svg', primary_stadium: 'Arena do Grêmio' },
+  { name: 'Internacional', abbreviation: 'INT', primary_color: '#FF0000', special_club: false, badge_filename: 'internacional.svg', primary_stadium: 'Beira-Rio' },
+  { name: 'Mirassol', abbreviation: 'MIR', primary_color: '#FFFF00', special_club: false, badge_filename: 'mirassol.png', primary_stadium: 'Estádio José Maria de Campos Maia' },
+  { name: 'Palmeiras', abbreviation: 'PAL', primary_color: '#008000', special_club: false, badge_filename: 'palmeiras.png', primary_stadium: 'Allianz Parque' },
+  { name: 'Red Bull Bragantino', abbreviation: 'RBB', primary_color: '#FFFFFF', special_club: false, badge_filename: 'red-bull-bragantino.png', primary_stadium: 'Nabi Abi Chedid' },
+  { name: 'Remo', abbreviation: 'REM', primary_color: '#0000FF', special_club: true, badge_filename: 'remo.svg', primary_stadium: 'Mangueirão' },
+  { name: 'Santos', abbreviation: 'SAN', primary_color: '#FFFFFF', special_club: false, badge_filename: 'santos.png', primary_stadium: 'Vila Belmiro' },
+  { name: 'São Paulo', abbreviation: 'SAO', primary_color: '#FF0000', special_club: false, badge_filename: 'sao-paulo.svg', primary_stadium: 'Morumbi' },
+  { name: 'Vasco da Gama', abbreviation: 'VAS', primary_color: '#000000', special_club: false, badge_filename: 'vasco-da-gama.svg', primary_stadium: 'São Januário' },
+  { name: 'Vitória', abbreviation: 'VIT', primary_color: '#FF0000', special_club: false, badge_filename: 'vitoria.svg', primary_stadium: 'Barradão' }
+]
+
+clubs_data.each do |c|
+  stadium = Stadium.find_by(name: c.delete(:primary_stadium))
+  Club.create!(c.merge(primary_stadium: stadium))
+end
+puts "✓ #{Club.count} clubes criados com estádios"
+
+# Adicionar Baenão como estádio secundário do Remo
+remo = Club.find_by(name: 'Remo')
+baenao = Stadium.find_by(name: 'Baenão')
+remo.club_stadiums.create!(stadium: baenao)
+puts "✓ Baenão adicionado como estádio secundário do Remo"
 
 championship_2026 = Championship.create!(
   year: 2026,
@@ -64,7 +102,6 @@ end
 puts "✓ 20 clubes adicionados"
 
 # Definir Remo como clube favorito
-remo = Club.find_by(name: 'Remo')
 championship_2026.update!(favorite_club: remo)
 puts "✓ Remo definido como clube favorito"
 
@@ -72,13 +109,69 @@ championship_2026.update!(active: true)
 38.times { |i| championship_2026.rounds.create!(number: i + 1) }
 puts "✓ 38 rodadas criadas"
 
-round1 = championship_2026.rounds.first
-clubs = championship_2026.clubs.where.not(name: 'Remo').to_a.shuffle
+# Ler planilha e criar partidas das 8 primeiras rodadas
+xlsx = Roo::Spreadsheet.open('/home/vagrant/simulador-brasileirao/storage/rodadas_brasileirao.xlsx')
+sheet = xlsx.sheet(0)
 
-Match.create!(round: round1, home_club: remo, away_club: clubs.pop, scheduled_at: DateTime.new(2026, 4, 10, 19, 0))
-9.times { |i| Match.create!(round: round1, home_club: clubs.pop, away_club: clubs.pop, scheduled_at: DateTime.new(2026, 4, 10 + i/3, 19 + i%3, 0)) }
+# Mapeamento de nomes de clubes (planilha -> banco)
+club_mapping = {
+  'Athletico' => 'Athletico Paranaense',
+  'Atlético Mineiro' => 'Atlético Mineiro',
+  'Bahia' => 'Bahia',
+  'Botafogo' => 'Botafogo',
+  'Chapecoense' => 'Chapecoense',
+  'Corinthians' => 'Corinthians',
+  'Coritiba' => 'Coritiba',
+  'Cruzeiro' => 'Cruzeiro',
+  'Flamengo' => 'Flamengo',
+  'Fluminense' => 'Fluminense',
+  'Grêmio' => 'Grêmio',
+  'Internacional' => 'Internacional',
+  'Mirassol' => 'Mirassol',
+  'Palmeiras' => 'Palmeiras',
+  'Red Bull Bragantino' => 'Red Bull Bragantino',
+  'Remo' => 'Remo',
+  'Santos' => 'Santos',
+  'São Paulo' => 'São Paulo',
+  'Vasco' => 'Vasco da Gama',
+  'Vitória' => 'Vitória'
+}
 
-puts "✓ 10 partidas criadas"
+matches_created = 0
+(2..sheet.last_row).each do |i|
+  row = sheet.row(i)
+  round_number = row[0].to_i
+  
+  break if round_number > 8 # Só criar até rodada 8
+  
+  date = row[1]
+  time_seconds = row[2].to_i
+  home_name = club_mapping[row[3]] || row[3]
+  away_name = club_mapping[row[4]] || row[4]
+  stadium_name = row[5]
+  
+  round = championship_2026.rounds.find_by(number: round_number)
+  home_club = Club.find_by(name: home_name)
+  away_club = Club.find_by(name: away_name)
+  stadium = Stadium.find_by(name: stadium_name)
+  
+  if home_club && away_club && round
+    hours = time_seconds / 3600
+    minutes = (time_seconds % 3600) / 60
+    scheduled_at = DateTime.new(date.year, date.month, date.day, hours, minutes, 0)
+    
+    Match.create!(
+      round: round,
+      home_club: home_club,
+      away_club: away_club,
+      stadium: stadium,
+      scheduled_at: scheduled_at
+    )
+    matches_created += 1
+  end
+end
+
+puts "✓ #{matches_created} partidas das 8 primeiras rodadas criadas"
 puts ""
 puts "Setup completo! http://localhost:3000"
 puts "Admin: admin@brasileirao.com / senha123"
