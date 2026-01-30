@@ -1,0 +1,64 @@
+<% content_for :title, "Partidas - Rodada #{@round.number}" %>
+<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], ["Campeonatos", admin_championships_path], [@championship.full_name, admin_championship_path(@championship)], "Rodada #{@round.number}" %>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Partidas - Rodada <%= @round.number %></h1>
+  <p style="font-size: 18px; color: #666; margin-top: 10px;">
+    <strong><%= @championship.full_name %></strong>
+  </p>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", admin_championship_path(@championship), class: "btn" %>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="text-align: center; margin-bottom: 20px;">Lista de Partidas</h2>
+  
+  <% if @matches.any? %>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align: center;">Data/Hora</th>
+          <th style="text-align: center;">Estadio</th>
+          <th style="text-align: center;">Mandante</th>
+          <th style="text-align: center;">Visitante</th>
+          <th style="text-align: center;">Status</th>
+          <th style="text-align: center;">Acoes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @matches.each do |match| %>
+          <tr>
+            <td style="text-align: center;"><%= match.scheduled_at&.strftime("%d/%m/%Y %H:%M") %></td>
+            <td style="text-align: center;">
+              <% if match.stadium %>
+                <%= match.stadium.name %><br>
+                <small style="color: #666;"><%= match.stadium.full_location %></small>
+              <% else %>
+                <span style="color: #999;">-</span>
+              <% end %>
+            </td>
+            <td style="text-align: center;"><strong><%= match.home_club.name %></strong></td>
+            <td style="text-align: center;"><strong><%= match.away_club.name %></strong></td>
+            <td style="text-align: center;">
+              <% if match.finished? %>
+                <span style="color: #28a745; font-weight: bold;">Finalizado</span>
+              <% elsif match.locked? %>
+                <span style="color: #dc3545; font-weight: bold;">Bloqueado</span>
+              <% else %>
+                <span style="color: #ffc107; font-weight: bold;">Aberto</span>
+              <% end %>
+            </td>
+            <td style="text-align: center;">
+              <%= link_to edit_admin_round_match_path(@round, match), style: "text-decoration: none; font-size: 24px;", title: "Editar" do %>
+                &#9998;
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p style="text-align: center; color: #666;">Nenhuma partida cadastrada ainda.</p>
+  <% end %>
+</div>

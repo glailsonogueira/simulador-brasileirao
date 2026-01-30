@@ -1,43 +1,80 @@
-<h1>Editar Partida - Rodada <%= @round.number %></h1>
+<% content_for :title, "Editar Partida" %>
+<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], ["Campeonatos", admin_championships_path], [@championship.full_name, admin_championship_path(@championship)], ["Rodada #{@round.number}", matches_admin_round_path(@round)], "Editar Partida" %>
 
-<%= link_to "← Voltar", admin_round_matches_path(@round), class: "btn", style: "margin-bottom: 20px;" %>
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Editar Partida</h1>
+  <p style="font-size: 18px; color: #666; margin-top: 10px;">
+    <strong><%= @match.home_club.name %> x <%= @match.away_club.name %></strong>
+  </p>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", matches_admin_round_path(@round), class: "btn" %>
+  </div>
+</div>
 
-<div class="card" style="max-width: 600px;">
+<div class="card" style="max-width: 800px; margin: 0 auto;">
   <%= form_with model: @match, url: admin_round_match_path(@round, @match), method: :patch, local: true do |f| %>
-    <div style="margin-bottom: 15px;">
-      <%= f.label :home_club_id, "Mandante:" %><br>
-      <%= f.collection_select :home_club_id, @round.championship.clubs.ordered, :id, :name, {}, { style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" } %>
-    </div>
-
-    <div style="margin-bottom: 15px;">
-      <%= f.label :away_club_id, "Visitante:" %><br>
-      <%= f.collection_select :away_club_id, @round.championship.clubs.ordered, :id, :name, {}, { style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" } %>
-    </div>
-
-    <div style="margin-bottom: 15px;">
-      <%= f.label :scheduled_at, "Data e Hora:" %><br>
-      <%= f.datetime_local_field :scheduled_at, style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" %>
-    </div>
-
-    <div style="margin-bottom: 15px;">
-      <label>
-        <%= f.check_box :finished %>
-        Jogo Finalizado
-      </label>
-    </div>
-
-    <% if @match.finished? %>
-      <div style="margin-bottom: 15px;">
-        <%= f.label :home_score, "Placar Mandante:" %><br>
-        <%= f.number_field :home_score, min: 0, max: 20, style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" %>
-      </div>
-
-      <div style="margin-bottom: 15px;">
-        <%= f.label :away_score, "Placar Visitante:" %><br>
-        <%= f.number_field :away_score, min: 0, max: 20, style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" %>
+    <% if @match.errors.any? %>
+      <div style="background: #f8d7da; color: #721c24; padding: 15px; margin-bottom: 15px; border-radius: 5px;">
+        <h4>Erros:</h4>
+        <ul>
+          <% @match.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
       </div>
     <% end %>
 
-    <%= f.submit "Salvar Alterações", class: "btn", style: "width: 100%;" %>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+      <!-- Coluna Esquerda -->
+      <div>
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Mandante:</label>
+          <div style="padding: 10px; background: #f8f9fa; border-radius: 5px;">
+            <strong><%= @match.home_club.name %></strong>
+          </div>
+          <small style="color: #666;">Não editável</small>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Visitante:</label>
+          <div style="padding: 10px; background: #f8f9fa; border-radius: 5px;">
+            <strong><%= @match.away_club.name %></strong>
+          </div>
+          <small style="color: #666;">Não editável</small>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <%= f.label :stadium_id, "Estádio:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+          <%= f.collection_select :stadium_id, @stadiums, :id, :full_name, { prompt: "Selecione um estádio" }, style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
+        </div>
+      </div>
+
+      <!-- Coluna Direita -->
+      <div>
+        <div style="margin-bottom: 15px;">
+          <%= f.label :scheduled_at, "Data e Hora:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
+          <%= f.datetime_local_field :scheduled_at, style: "width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 5px;">Placar:</label>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <%= f.number_field :home_score, min: 0, max: 20, placeholder: "Casa", style: "width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; text-align: center;" %>
+            <strong style="font-size: 20px;">x</strong>
+            <%= f.number_field :away_score, min: 0, max: 20, placeholder: "Fora", style: "width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; text-align: center;" %>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="display: flex; align-items: center; cursor: pointer; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+            <%= f.check_box :finished, style: "width: 20px; height: 20px; margin-right: 10px;" %>
+            <span style="font-weight: bold;">Partida Finalizada</span>
+          </label>
+          <small style="color: #666; display: block; margin-top: 5px;">Marque quando o placar final for informado</small>
+        </div>
+      </div>
+    </div>
+
+    <%= f.submit "Salvar Alterações", class: "btn", style: "width: auto; padding: 10px 30px; font-size: 16px; background: #28a745; margin-top: 20px;" %>
   <% end %>
 </div>

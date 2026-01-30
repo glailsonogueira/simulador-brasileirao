@@ -1,0 +1,51 @@
+<% content_for :title, "Resultados - Rodada #{@round.number}" %>
+<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], ["Campeonatos", admin_championships_path], [@championship.full_name, admin_championship_path(@championship)], "Rodada #{@round.number}" %>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;">Resultados - Rodada <%= @round.number %></h1>
+  <p style="font-size: 18px; color: #666; margin-top: 10px;">
+    <strong><%= @championship.full_name %></strong>
+  </p>
+  <div style="margin-top: 15px;">
+    <%= link_to "Voltar", admin_championship_path(@championship), class: "btn" %>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="text-align: center; margin-bottom: 20px;">Informar Resultados</h2>
+  
+  <%= form_with url: update_results_admin_round_path(@round), method: :post, local: true do %>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align: center;">Data/Hora</th>
+          <th style="text-align: center;">Mandante</th>
+          <th style="text-align: center;">Placar</th>
+          <th style="text-align: center;">Visitante</th>
+          <th style="text-align: center;">Finalizado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @matches.each do |match| %>
+          <tr>
+            <td style="text-align: center;"><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
+            <td style="text-align: center;"><strong><%= match.home_club.name %></strong></td>
+            <td style="text-align: center;">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                <%= number_field_tag "matches[#{match.id}][home]", match.home_score, min: 0, max: 20, style: "width: 50px; text-align: center; padding: 5px;" %>
+                <strong>x</strong>
+                <%= number_field_tag "matches[#{match.id}][away]", match.away_score, min: 0, max: 20, style: "width: 50px; text-align: center; padding: 5px;" %>
+              </div>
+            </td>
+            <td style="text-align: center;"><strong><%= match.away_club.name %></strong></td>
+            <td style="text-align: center;">
+              <%= check_box_tag "matches[#{match.id}][finished]", "1", match.finished?, style: "width: 20px; height: 20px;" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <%= submit_tag "Salvar Resultados", class: "btn", style: "margin-top: 20px; background: #28a745;" %>
+  <% end %>
+</div>

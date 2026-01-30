@@ -46,6 +46,8 @@ Rails.application.routes.draw do
       post :create_matches, on: :member
       get :results, on: :member
       post :update_results, on: :member
+      
+      resources :matches, only: [:edit, :update]
     end
   end
   

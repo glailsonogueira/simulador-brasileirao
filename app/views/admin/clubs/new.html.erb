@@ -38,9 +38,10 @@
         <div style="margin-bottom: 15px;">
           <%= f.label :primary_color, "Cor Principal:", style: "display: block; font-weight: bold; margin-bottom: 5px;" %>
           <div style="display: flex; gap: 10px; align-items: center;">
-            <%= f.color_field :primary_color, style: "width: 80px; height: 40px; border: 1px solid #ddd; border-radius: 5px;" %>
-            <%= f.text_field :primary_color, placeholder: "#0000FF", style: "flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
+            <%= f.color_field :primary_color, id: "color_picker", value: "#0000FF", style: "width: 60px; height: 60px; border: 1px solid #ddd; border-radius: 5px; cursor: pointer;" %>
+            <%= f.text_field :primary_color, id: "color_hex", placeholder: "#0000FF", maxlength: 7, style: "flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; text-transform: uppercase;" %>
           </div>
+          <small style="color: #666;">Clique no quadrado ou digite o codigo hex</small>
         </div>
       </div>
 
@@ -66,6 +67,41 @@
       <small style="color: #666; display: block; margin-top: 5px;">Formatos aceitos: PNG, JPG, SVG</small>
     </div>
 
-    <%= f.submit "Criar Clube", class: "btn", style: "width: 100%; padding: 15px; font-size: 16px; background: #28a745;" %>
+    <%= f.submit "Criar Clube", class: "btn", style: "width: auto; padding: 10px 30px; font-size: 16px; background: #28a745;" %>
   <% end %>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const colorPicker = document.getElementById('color_picker');
+    const colorHex = document.getElementById('color_hex');
+    
+    if (colorPicker && colorHex) {
+      // Quando mudar o color picker, atualiza o campo hex
+      colorPicker.addEventListener('input', function() {
+        colorHex.value = this.value.toUpperCase();
+      });
+      
+      // Quando digitar no campo hex, atualiza o color picker
+      colorHex.addEventListener('input', function() {
+        let value = this.value.trim();
+        
+        // Adicionar # se não tiver
+        if (value && !value.startsWith('#')) {
+          value = '#' + value;
+          this.value = value;
+        }
+        
+        // Validar e atualizar picker se for hex válido
+        if (/^#[0-9A-F]{6}$/i.test(value)) {
+          colorPicker.value = value;
+        }
+      });
+      
+      // Forçar uppercase ao sair do campo
+      colorHex.addEventListener('blur', function() {
+        this.value = this.value.toUpperCase();
+      });
+    }
+  });
+</script>

@@ -43,26 +43,26 @@ stadiums_data.each { |s| Stadium.create!(s) }
 puts "✓ #{Stadium.count} estádios criados"
 
 clubs_data = [
-  { name: 'Athletico Paranaense', abbreviation: 'CAP', primary_color: '#FF0000', special_club: false, badge_filename: 'athletico-paranaense.svg', primary_stadium: 'Arena da Baixada' },
-  { name: 'Atlético Mineiro', abbreviation: 'CAM', primary_color: '#000000', special_club: false, badge_filename: 'atletico-mineiro.svg', primary_stadium: 'Arena MRV' },
-  { name: 'Bahia', abbreviation: 'BAH', primary_color: '#0000FF', special_club: false, badge_filename: 'bahia.svg', primary_stadium: 'Arena Fonte Nova' },
-  { name: 'Botafogo', abbreviation: 'BOT', primary_color: '#000000', special_club: false, badge_filename: 'botafogo.svg', primary_stadium: 'Estádio Nilton Santos' },
+  { name: 'Athletico Paranaense', abbreviation: 'CAP', primary_color: '#FF0000', special_club: false, badge_filename: 'athletico-paranaense.png', primary_stadium: 'Arena da Baixada' },
+  { name: 'Atlético Mineiro', abbreviation: 'CAM', primary_color: '#000000', special_club: false, badge_filename: 'atletico-mineiro.png', primary_stadium: 'Arena MRV' },
+  { name: 'Bahia', abbreviation: 'BAH', primary_color: '#0000FF', special_club: false, badge_filename: 'bahia.png', primary_stadium: 'Arena Fonte Nova' },
+  { name: 'Botafogo', abbreviation: 'BOT', primary_color: '#000000', special_club: false, badge_filename: 'botafogo.png', primary_stadium: 'Estádio Nilton Santos' },
   { name: 'Chapecoense', abbreviation: 'CHA', primary_color: '#008000', special_club: false, badge_filename: 'chapecoense.png', primary_stadium: 'Arena Condá' },
   { name: 'Corinthians', abbreviation: 'COR', primary_color: '#000000', special_club: false, badge_filename: 'corinthians.png', primary_stadium: 'Neo Química Arena' },
-  { name: 'Coritiba', abbreviation: 'CFC', primary_color: '#00FF00', special_club: false, badge_filename: 'coritiba.svg', primary_stadium: 'Couto Pereira' },
-  { name: 'Cruzeiro', abbreviation: 'CRU', primary_color: '#0000FF', special_club: false, badge_filename: 'cruzeiro.png', primary_stadium: 'Mineirão' },
-  { name: 'Flamengo', abbreviation: 'FLA', primary_color: '#FF0000', special_club: false, badge_filename: 'flamengo.svg', primary_stadium: 'Maracanã' },
-  { name: 'Fluminense', abbreviation: 'FLU', primary_color: '#8B0000', special_club: false, badge_filename: 'fluminense.svg', primary_stadium: 'Maracanã' },
-  { name: 'Grêmio', abbreviation: 'GRE', primary_color: '#0000FF', special_club: false, badge_filename: 'gremio.svg', primary_stadium: 'Arena do Grêmio' },
-  { name: 'Internacional', abbreviation: 'INT', primary_color: '#FF0000', special_club: false, badge_filename: 'internacional.svg', primary_stadium: 'Beira-Rio' },
-  { name: 'Mirassol', abbreviation: 'MIR', primary_color: '#FFFF00', special_club: false, badge_filename: 'mirassol.png', primary_stadium: 'Estádio José Maria de Campos Maia' },
+  { name: 'Coritiba', abbreviation: 'CFC', primary_color: '#165f11', special_club: false, badge_filename: 'coritiba.png', primary_stadium: 'Couto Pereira' },
+  { name: 'Cruzeiro', abbreviation: 'CRU', primary_color: '#2B519F', special_club: false, badge_filename: 'cruzeiro.png', primary_stadium: 'Mineirão' },
+  { name: 'Flamengo', abbreviation: 'FLA', primary_color: '#FF0000', special_club: false, badge_filename: 'flamengo.png', primary_stadium: 'Maracanã' },
+  { name: 'Fluminense', abbreviation: 'FLU', primary_color: '#8B0000', special_club: false, badge_filename: 'fluminense.png', primary_stadium: 'Maracanã' },
+  { name: 'Grêmio', abbreviation: 'GRE', primary_color: '#0581C0', special_club: false, badge_filename: 'gremio.png', primary_stadium: 'Arena do Grêmio' },
+  { name: 'Internacional', abbreviation: 'INT', primary_color: '#FF0000', special_club: false, badge_filename: 'internacional.png', primary_stadium: 'Beira-Rio' },
+  { name: 'Mirassol', abbreviation: 'MIR', primary_color: '#F6EA10', special_club: false, badge_filename: 'mirassol.png', primary_stadium: 'Estádio José Maria de Campos Maia' },
   { name: 'Palmeiras', abbreviation: 'PAL', primary_color: '#008000', special_club: false, badge_filename: 'palmeiras.png', primary_stadium: 'Allianz Parque' },
-  { name: 'Red Bull Bragantino', abbreviation: 'RBB', primary_color: '#FFFFFF', special_club: false, badge_filename: 'red-bull-bragantino.png', primary_stadium: 'Nabi Abi Chedid' },
-  { name: 'Remo', abbreviation: 'REM', primary_color: '#0000FF', special_club: true, badge_filename: 'remo.svg', primary_stadium: 'Mangueirão' },
+  { name: 'Red Bull Bragantino', abbreviation: 'RBB', primary_color: '#FDCD02', special_club: false, badge_filename: 'red-bull-bragantino.png', primary_stadium: 'Nabi Abi Chedid' },
+  { name: 'Remo', abbreviation: 'REM', primary_color: '#1D1D7C', special_club: true, badge_filename: 'remo.png', primary_stadium: 'Mangueirão' },
   { name: 'Santos', abbreviation: 'SAN', primary_color: '#FFFFFF', special_club: false, badge_filename: 'santos.png', primary_stadium: 'Vila Belmiro' },
-  { name: 'São Paulo', abbreviation: 'SAO', primary_color: '#FF0000', special_club: false, badge_filename: 'sao-paulo.svg', primary_stadium: 'Morumbi' },
-  { name: 'Vasco da Gama', abbreviation: 'VAS', primary_color: '#000000', special_club: false, badge_filename: 'vasco-da-gama.svg', primary_stadium: 'São Januário' },
-  { name: 'Vitória', abbreviation: 'VIT', primary_color: '#FF0000', special_club: false, badge_filename: 'vitoria.svg', primary_stadium: 'Barradão' }
+  { name: 'São Paulo', abbreviation: 'SAO', primary_color: '#FF0000', special_club: false, badge_filename: 'sao-paulo.png', primary_stadium: 'Morumbi' },
+  { name: 'Vasco da Gama', abbreviation: 'VAS', primary_color: '#000000', special_club: false, badge_filename: 'vasco-da-gama.png', primary_stadium: 'São Januário' },
+  { name: 'Vitória', abbreviation: 'VIT', primary_color: '#FF0000', special_club: false, badge_filename: 'vitoria.png', primary_stadium: 'Barradão' }
 ]
 
 clubs_data.each do |c|
@@ -81,7 +81,7 @@ championship_2026 = Championship.create!(
   year: 2026,
   name: 'Brasileirão Série A',
   active: false,
-  start_date: Date.new(2026, 4, 10),
+  start_date: Date.new(2026, 1, 28),
   end_date: Date.new(2026, 12, 5)
 )
 
@@ -158,7 +158,9 @@ matches_created = 0
   if home_club && away_club && round
     hours = time_seconds / 3600
     minutes = (time_seconds % 3600) / 60
-    scheduled_at = DateTime.new(date.year, date.month, date.day, hours, minutes, 0)
+    
+    # IMPORTANTE: Usar Time.zone.local para respeitar o fuso horário de Brasília (UTC-3)
+    scheduled_at = Time.zone.local(date.year, date.month, date.day, hours, minutes, 0)
     
     Match.create!(
       round: round,

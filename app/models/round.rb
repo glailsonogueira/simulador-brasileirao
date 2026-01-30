@@ -5,35 +5,95 @@ class Round < ApplicationRecord
   
   validates :number, presence: true, uniqueness: { scope: :championship_id }
   
-  scope :ordered, -> { order(:number) }
-  
-  def all_matches_finished?
-    matches.any? && matches.all?(&:finished?)
+  # Status da rodada para um usuário específico
+  def status_for_user(user)
+    return :bloqueada if blocked?
+    return :encerrada if finished?
+    return :aguardando_encerramento if awaiting_closure?
+    return :em_andamento if in_progress_for_user?(user)
+    return :aberta_previsoes if open_for_predictions?
+    :aberta_previsoes
   end
   
-  def previous_round
-    championship.rounds.where('number < ?', number).order(number: :desc).first
+  # Bloqueada (rodada anterior não encerrada)
+  def blocked?
+    return false if number == 1 # Primeira rodada nunca bloqueia
+    
+    previous_round = championship.rounds.find_by(number: number - 1)
+    return false if previous_round.nil?
+    
+    !previous_round.finished?
   end
   
-  def is_unlocked?
-    return true if number == 1 # Primeira rodada sempre liberada
-    previous_round&.all_matches_finished? || false
-  end
-  
-  def deadline_passed?
+  # Encerrada (todos jogos finalizados)
+  def finished?
     return false if matches.empty?
-    first_match = matches.order(:scheduled_at).first
-    first_match.scheduled_at - 1.hour < Time.current
+    matches.all?(&:finished?)
   end
   
+  # Aguardando Encerramento (todos jogos iniciaram mas não finalizaram)
+  def awaiting_closure?
+    return false if matches.empty?
+    
+    all_started = matches.all? { |m| m.scheduled_at.present? && Time.current >= m.scheduled_at }
+    not_all_finished = matches.any? { |m| !m.finished? }
+    
+    all_started && not_all_finished
+  end
+  
+  # Aberta para Previsões (pelo menos 1 jogo ainda aceita previsão)
   def open_for_predictions?
-    !deadline_passed?
+    return false if matches.empty?
+    matches.any? { |m| m.can_predict? }
   end
   
-  def status
-    return :locked unless is_unlocked?
-    return :finished if all_matches_finished?
-    return :closed if deadline_passed?
-    :open
+  # Em Andamento (para um usuário específico)
+  def in_progress_for_user?(user)
+    return false if matches.empty?
+    
+    # Pelo menos um jogo já começou
+    has_started = matches.any? { |m| m.scheduled_at.present? && Time.current >= m.scheduled_at }
+    return false unless has_started
+    
+    # Ainda tem jogos abertos para previsão
+    has_open_matches = matches.any? { |m| m.can_predict? }
+    return false unless has_open_matches
+    
+    # Todas as previsões do usuário foram feitas
+    matches_with_predictions = user.predictions.where(match: matches).count
+    all_predictions_made = matches_with_predictions == matches.count
+    
+    all_predictions_made
+  end
+  
+  # Pelo menos um jogo já começou?
+  def any_match_started?
+    matches.any? { |m| m.scheduled_at.present? && Time.current >= m.scheduled_at }
+  end
+  
+  alias_method :all_matches_finished?, :finished?
+  
+  # Helpers para exibição
+  def status_label_for_user(user)
+    case status_for_user(user)
+    when :aberta_previsoes then 'Aberta para Previsoes'
+    when :bloqueada then 'Bloqueada'
+    when :em_andamento then 'Em Andamento'
+    when :aguardando_encerramento then 'Aguardando Encerramento'
+    when :encerrada then 'Encerrada'
+    else 'Aberta para Previsoes'
+    end
+  end
+  
+  def status_color_for_user(user)
+    case status_for_user(user)
+    when :aberta_previsoes
+      any_match_started? ? '#28a745' : '#ffc107'  # Verde se iniciou, Amarelo se não
+    when :bloqueada then '#dc3545'                # Vermelho
+    when :em_andamento then '#28a745'             # Verde
+    when :aguardando_encerramento then '#007bff'  # Azul
+    when :encerrada then '#666'                   # Cinza
+    else '#ffc107'
+    end
   end
 end
