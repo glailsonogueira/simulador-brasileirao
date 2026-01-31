@@ -110,7 +110,7 @@ championship_2026.update!(active: true)
 puts "✓ 38 rodadas criadas"
 
 # Ler planilha e criar partidas das 8 primeiras rodadas
-xlsx = Roo::Spreadsheet.open(Rails.root.join('storage', 'rodadas_brasileirao.xlsx'))
+xlsx = Roo::Spreadsheet.open(Rails.root.join('storage', 'rodadas_brasileirao.xlsx').to_s)
 sheet = xlsx.sheet(0)
 
 # Mapeamento de nomes de clubes (planilha -> banco)
@@ -215,7 +215,7 @@ puts "Importando previsões da Rodada 1..."
 
 require 'roo'
 
-xlsx = Roo::Spreadsheet.open(Rails.root.join('storage', 'cadastro_previsoes_usuario.xlsx'))
+xlsx = Roo::Spreadsheet.open(Rails.root.join('storage', 'cadastro_previsoes_usuario.xlsx').to_s)
 sheet = xlsx.sheet(0)
 
 club_mapping = {
