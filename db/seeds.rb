@@ -110,7 +110,7 @@ championship_2026.update!(active: true)
 puts "✓ 38 rodadas criadas"
 
 # Ler planilha e criar partidas das 8 primeiras rodadas
-xlsx = Roo::Spreadsheet.open('/home/vagrant/simulador-brasileirao/storage/rodadas_brasileirao.xlsx')
+xlsx = Roo::Spreadsheet.open(Rails.root.join('storage', 'rodadas_brasileirao.xlsx'))
 sheet = xlsx.sheet(0)
 
 # Mapeamento de nomes de clubes (planilha -> banco)
@@ -177,3 +177,117 @@ puts "✓ #{matches_created} partidas das 8 primeiras rodadas criadas"
 puts ""
 puts "Setup completo! http://localhost:3000"
 puts "Admin: admin@brasileirao.com / senha123"
+
+# ====================
+# IMPORTAR USUÁRIOS
+# ====================
+puts ""
+puts "Importando usuários..."
+
+users_data = [
+  { name: 'Kynho Aviz', email: 'vynnyaviz@gmail.com', admin: false },
+  { name: 'Felipe Virgolino', email: 'felipevirgolinobatista@gmail.com', admin: true },
+  { name: 'Lucas Fonseca', email: 'lucascauafonseca@gmail.com', admin: false },
+  { name: 'Sirnande de Lima', email: 'sirnandelima95@gmail.com', admin: false },
+  { name: 'Selton Santiago', email: 'seltonsantiago@gmail.com', admin: false },
+  { name: 'Leandro Monteiro', email: 'leandroconsultor.no@gmail.com', admin: false },
+  { name: 'Glailson Nogueira', email: 'glailsonogueira@gmail.com', admin: true }
+]
+
+users_data.each do |user_data|
+  User.create!(
+    name: user_data[:name],
+    email: user_data[:email],
+    password: 'felipefresco',
+    password_confirmation: 'felipefresco',
+    admin: user_data[:admin],
+    active: true
+  )
+end
+
+puts "✓ #{User.count} usuários criados"
+
+# ====================
+# IMPORTAR PREVISÕES
+# ====================
+puts ""
+puts "Importando previsões da Rodada 1..."
+
+require 'roo'
+
+xlsx = Roo::Spreadsheet.open(Rails.root.join('storage', 'cadastro_previsoes_usuario.xlsx'))
+sheet = xlsx.sheet(0)
+
+club_mapping = {
+  'Athletico Paranaense' => 'Athletico Paranaense',
+  'Athletico' => 'Athletico Paranaense',
+  'Atlético Mineiro' => 'Atlético Mineiro',
+  'Bahia' => 'Bahia',
+  'Botafogo' => 'Botafogo',
+  'Chapecoense' => 'Chapecoense',
+  'Corinthians' => 'Corinthians',
+  'Coritiba' => 'Coritiba',
+  'Cruzeiro' => 'Cruzeiro',
+  'Flamengo' => 'Flamengo',
+  'Fluminense' => 'Fluminense',
+  'Grêmio' => 'Grêmio',
+  'Internacional' => 'Internacional',
+  'Mirassol' => 'Mirassol',
+  'Palmeiras' => 'Palmeiras',
+  'Red Bull Bragantino' => 'Red Bull Bragantino',
+  'Remo' => 'Remo',
+  'Santos' => 'Santos',
+  'São Paulo' => 'São Paulo',
+  'Vasco da Gama' => 'Vasco da Gama',
+  'Vitória' => 'Vitória'
+}
+
+championship = Championship.find_by(active: true)
+round1 = championship.rounds.find_by(number: 1)
+
+created_count = 0
+skipped_count = 0
+
+(2..sheet.last_row).each do |i|
+  row = sheet.row(i)
+  
+  email = row[0]
+  home_name = club_mapping[row[1]] || row[1]
+  placar_casa = row[2]
+  placar_fora = row[3]
+  away_name = club_mapping[row[4]] || row[4]
+  predicted_at = row[5]
+  
+  next if placar_casa.nil? || placar_fora.nil?
+  
+  user = User.find_by(email: email)
+  next unless user
+  
+  home_club = Club.find_by(name: home_name)
+  away_club = Club.find_by(name: away_name)
+  next unless home_club && away_club
+  
+  match = round1.matches.find_by(home_club: home_club, away_club: away_club)
+  next unless match
+  
+  prediction = Prediction.find_or_initialize_by(user: user, match: match)
+  prediction.home_score = placar_casa.to_i
+  prediction.away_score = placar_fora.to_i
+  prediction.predicted_at = predicted_at.present? ? predicted_at : Time.current
+  
+  if prediction.save
+    created_count += 1
+  else
+    skipped_count += 1
+  end
+end
+
+puts "✓ #{created_count} previsões importadas"
+puts "✗ #{skipped_count} previsões ignoradas" if skipped_count > 0
+
+puts ""
+puts "=" * 50
+puts "Setup completo com usuários e previsões!"
+puts "Admin: admin@brasileirao.com / senha123"
+puts "Outros usuários: senha 'felipefresco'"
+puts "=" * 50
