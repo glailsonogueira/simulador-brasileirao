@@ -22,6 +22,12 @@ Rails.application.routes.draw do
   get 'championship/:championship_id/round/:round_id/ranking', to: 'rankings#round', as: :round_rankings
   get 'championship/:championship_id/user/:user_id/ranking', to: 'rankings#user_detail', as: :user_detail_rankings
   
+  resources :championships, only: [] do
+    member do
+      post :recalculate_all_rankings
+    end
+  end
+  
   namespace :admin do
     resources :championships do
       member do
@@ -46,6 +52,7 @@ Rails.application.routes.draw do
       post :create_matches, on: :member
       get :results, on: :member
       post :update_results, on: :member
+      post :calculate_rankings, on: :member
       
       resources :matches, only: [:edit, :update]
     end

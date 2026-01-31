@@ -8,35 +8,43 @@
   </p>
   <div style="margin-top: 15px;">
     <%= link_to "Voltar", rankings_path, class: "btn" %>
+    <% if current_user&.admin? %>
+      <%= button_to "Recalcular Todos Rankings", recalculate_all_rankings_championship_path(@championship), method: :post, class: "btn", style: "background: #007bff; margin-left: 10px;" %>
+    <% end %>
   </div>
 </div>
 
 <div class="card">
   <h2 style="text-align: center; margin-bottom: 20px;">Classificacao Geral</h2>
-  <table>
-    <thead>
-      <tr>
-        <th style="text-align: center;">Posicao</th>
-        <th style="text-align: center;">Usuario</th>
-        <th style="text-align: center;">Pontos</th>
-        <th style="text-align: center;">Acoes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @overall_standings.each_with_index do |standing, index| %>
+  
+  <% if @overall_standings.any? %>
+    <table>
+      <thead>
         <tr>
-          <td style="text-align: center;"><strong><%= index + 1 %>°</strong></td>
-          <td style="text-align: center;"><%= standing.user.name %></td>
-          <td style="text-align: center;"><strong><%= standing.total_points %></strong></td>
-          <td style="text-align: center;">
-            <%= link_to user_detail_rankings_path(championship_id: @championship.id, user_id: standing.user.id), style: "text-decoration: none; font-size: 24px;", title: "Detalhes" do %>
-              &#128200;
-            <% end %>
-          </td>
+          <th style="text-align: center;">Posicao</th>
+          <th style="text-align: center;">Usuario</th>
+          <th style="text-align: center;">Pontos</th>
+          <th style="text-align: center;">Acoes</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @overall_standings.each do |standing| %>
+          <tr>
+            <td style="text-align: center;"><strong><%= standing.position %>°</strong></td>
+            <td style="text-align: center;"><%= standing.user.name %></td>
+            <td style="text-align: center;"><strong><%= standing.total_points %></strong></td>
+            <td style="text-align: center;">
+              <%= link_to user_detail_rankings_path(championship_id: @championship.id, user_id: standing.user.id), style: "text-decoration: none; font-size: 24px;", title: "Detalhes" do %>
+                &#128200;
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p style="text-align: center; color: #666;">Nenhum ranking disponivel ainda. Clique em "Recalcular" para gerar.</p>
+  <% end %>
 </div>
 
 <div class="card">

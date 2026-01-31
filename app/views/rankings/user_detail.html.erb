@@ -1,4 +1,4 @@
-<% content_for :title, "Desempenho - #{@user.name}" %>
+<% content_for :title, "Desempenho: #{@user.name}" %>
 <%= breadcrumb ["Inicio", root_path], ["Rankings", rankings_path], [@championship.full_name, championship_rankings_path(championship_id: @championship.id)], @user.name %>
 
 <div style="text-align: center; margin-bottom: 30px;">
@@ -12,45 +12,87 @@
 </div>
 
 <div class="card">
-  <h2 style="text-align: center; margin-bottom: 20px;">Resumo Geral</h2>
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 20px 0;">
-    <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 5px;">
-      <h3 style="font-size: 36px; color: #000080; margin: 10px 0;"><%= @overall_standing&.total_points || 0 %></h3>
-      <p style="color: #666;">Pontos Totais</p>
+  <h2 style="text-align: center; margin-bottom: 30px;">Resumo Geral</h2>
+  
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 40px;">
+    <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 10px;">
+      <h3 style="color: #000080; font-size: 48px; margin-bottom: 10px;"><%= @overall_standing&.total_points || 0 %></h3>
+      <p style="color: #666; font-size: 16px;">Pontos Totais</p>
     </div>
-    <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 5px;">
-      <h3 style="font-size: 36px; color: #28a745; margin: 10px 0;"><%= @overall_standing&.rounds_won || 0 %></h3>
-      <p style="color: #666;">Rodadas Vencidas</p>
+    
+    <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 10px;">
+      <h3 style="color: #28a745; font-size: 48px; margin-bottom: 10px;"><%= @overall_standing&.rounds_won || 0 %></h3>
+      <p style="color: #666; font-size: 16px;">Rodadas Vencidas</p>
     </div>
-    <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 5px;">
-      <h3 style="font-size: 36px; color: #ffc107; margin: 10px 0;"><%= @overall_standing&.position || '-' %>º</h3>
-      <p style="color: #666;">Posicao Geral</p>
+    
+    <div style="text-align: center; padding: 30px; background: #f8f9fa; border-radius: 10px;">
+      <h3 style="color: #ffc107; font-size: 48px; margin-bottom: 10px;"><%= @overall_standing&.position || '-' %>º</h3>
+      <p style="color: #666; font-size: 16px;">Posicao Geral</p>
+    </div>
+  </div>
+  
+  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+    <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+      <h4 style="color: #000080; font-size: 32px; margin-bottom: 10px;"><%= @overall_standing&.exact_scores || 0 %></h4>
+      <p style="color: #666;">Placares Exatos</p>
+    </div>
+    
+    <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+      <h4 style="color: #000080; font-size: 32px; margin-bottom: 10px;"><%= @overall_standing&.correct_results || 0 %></h4>
+      <p style="color: #666;">Resultados Corretos</p>
     </div>
   </div>
 </div>
 
 <div class="card">
   <h2 style="text-align: center; margin-bottom: 20px;">Desempenho por Rodada</h2>
-  <table>
-    <thead>
-      <tr>
-        <th style="text-align: center;">Rodada</th>
-        <th style="text-align: center;">Pontos</th>
-        <th style="text-align: center;">Posicao</th>
-        <th style="text-align: center;">Placares Exatos</th>
-        <th style="text-align: center;">Resultados Corretos</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @round_scores.each do |score| %>
+  
+  <% if @round_scores.any? %>
+    <table>
+      <thead>
         <tr>
-          <td style="text-align: center;"><strong>Rodada <%= score.round.number %></strong></td>
-          <td style="text-align: center;"><%= score.total_points %></td>
-          <td style="text-align: center;"><%= score.position %>º</td>
-          <td style="text-align: center;"><%= score.exact_scores %></td>
-          <td style="text-align: center;"><%= score.correct_results %></td>
+          <th style="text-align: center;">Rodada</th>
+          <th style="text-align: center;">Posicao</th>
+          <th style="text-align: center;">Pontos</th>
+          <th style="text-align: center;">Placares Exatos</th>
+          <th style="text-align: center;">Resultados Corretos</th>
+          <th style="text-align: center;">Status</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @round_scores.each do |score| %>
+          <tr>
+            <td style="text-align: center;">
+              <%= link_to "Rodada #{score.round.number}", round_rankings_path(championship_id: @championship.id, round_id: score.round.id), style: "color: #000080; text-decoration: none; font-weight: bold;" %>
+            </td>
+            <td style="text-align: center;">
+              <% if score.winner? %>
+                <span style="font-size: 20px;">&#129351;</span> <strong>1º</strong>
+              <% elsif score.position == 2 %>
+                <span style="font-size: 20px;">&#129352;</span> <strong>2º</strong>
+              <% elsif score.position == 3 %>
+                <span style="font-size: 20px;">&#129353;</span> <strong>3º</strong>
+              <% else %>
+                <strong><%= score.position %>º</strong>
+              <% end %>
+            </td>
+            <td style="text-align: center;"><strong><%= score.total_points %></strong></td>
+            <td style="text-align: center;"><%= score.exact_scores %></td>
+            <td style="text-align: center;"><%= score.correct_results %></td>
+            <td style="text-align: center;">
+              <% if score.winner? %>
+                <span style="background: #28a745; color: white; padding: 5px 10px; border-radius: 5px; font-weight: bold;">Vencedor</span>
+              <% elsif score.position <= 3 %>
+                <span style="background: #ffc107; color: white; padding: 5px 10px; border-radius: 5px; font-weight: bold;">Podio</span>
+              <% else %>
+                <span style="color: #999;">-</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p style="text-align: center; color: #666;">Nenhuma pontuacao ainda.</p>
+  <% end %>
 </div>

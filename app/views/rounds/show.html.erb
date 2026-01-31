@@ -12,7 +12,7 @@
 </div>
 
 <div class="card">
-  <%= form_with url: update_batch_predictions_path(championship_id: @championship.id, round_id: @round.id), method: :patch, local: true do %>
+  <%= form_with url: update_batch_predictions_path(championship_id: @championship.id, round_id: @round.id), method: :patch, local: true, id: "predictions-form" do %>
     <table>
       <thead>
         <tr>
@@ -63,9 +63,17 @@
               <% prediction = @predictions[match.id] %>
               <% if can_predict %>
                 <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                  <%= number_field_tag "predictions[#{match.id}][home]", prediction&.home_score, min: 0, max: 20, style: "width: 50px; text-align: center; padding: 5px;" %>
+                  <%= number_field_tag "predictions[#{match.id}][home]", prediction&.home_score, 
+                      min: 0, max: 20, 
+                      class: "prediction-field",
+                      data: { original: prediction&.home_score },
+                      style: "width: 50px; text-align: center; padding: 5px;" %>
                   <strong>x</strong>
-                  <%= number_field_tag "predictions[#{match.id}][away]", prediction&.away_score, min: 0, max: 20, style: "width: 50px; text-align: center; padding: 5px;" %>
+                  <%= number_field_tag "predictions[#{match.id}][away]", prediction&.away_score, 
+                      min: 0, max: 20,
+                      class: "prediction-field",
+                      data: { original: prediction&.away_score },
+                      style: "width: 50px; text-align: center; padding: 5px;" %>
                 </div>
               <% else %>
                 <% if prediction %>
@@ -115,9 +123,74 @@
     </table>
     
     <% if @matches.any? { |m| m.can_predict? } %>
-      <%= submit_tag "Salvar Previsoes", class: "btn", style: "margin-top: 20px;" %>
+      <%= submit_tag "Salvar Previsoes", id: "save-button", class: "btn", style: "margin-top: 20px;", disabled: true %>
     <% else %>
       <p style="text-align: center; color: #999; margin-top: 20px;">Todos os jogos estao bloqueados ou finalizados.</p>
     <% end %>
   <% end %>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const saveButton = document.getElementById('save-button');
+    const predictionFields = document.querySelectorAll('.prediction-field');
+    
+    if (!saveButton || predictionFields.length === 0) return;
+    
+    function checkForChanges() {
+      let hasChanges = false;
+      
+      predictionFields.forEach(field => {
+        const originalValue = field.dataset.original || '';
+        const currentValue = field.value || '';
+        
+        if (originalValue !== currentValue) {
+          hasChanges = true;
+        }
+      });
+      
+      saveButton.disabled = !hasChanges;
+      saveButton.style.opacity = hasChanges ? '1' : '0.5';
+      saveButton.style.cursor = hasChanges ? 'pointer' : 'not-allowed';
+    }
+    
+    predictionFields.forEach(field => {
+      field.addEventListener('input', checkForChanges);
+      field.addEventListener('change', checkForChanges);
+    });
+    
+    // Verificar no carregamento
+    checkForChanges();
+  });
+  
+  document.addEventListener('turbo:load', function() {
+    const saveButton = document.getElementById('save-button');
+    const predictionFields = document.querySelectorAll('.prediction-field');
+    
+    if (!saveButton || predictionFields.length === 0) return;
+    
+    function checkForChanges() {
+      let hasChanges = false;
+      
+      predictionFields.forEach(field => {
+        const originalValue = field.dataset.original || '';
+        const currentValue = field.value || '';
+        
+        if (originalValue !== currentValue) {
+          hasChanges = true;
+        }
+      });
+      
+      saveButton.disabled = !hasChanges;
+      saveButton.style.opacity = hasChanges ? '1' : '0.5';
+      saveButton.style.cursor = hasChanges ? 'pointer' : 'not-allowed';
+    }
+    
+    predictionFields.forEach(field => {
+      field.addEventListener('input', checkForChanges);
+      field.addEventListener('change', checkForChanges);
+    });
+    
+    checkForChanges();
+  });
+</script>

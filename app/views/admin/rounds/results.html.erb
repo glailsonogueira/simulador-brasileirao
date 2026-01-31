@@ -8,6 +8,7 @@
   </p>
   <div style="margin-top: 15px;">
     <%= link_to "Voltar", admin_championship_path(@championship), class: "btn" %>
+    <%= button_to "Calcular Rankings", calculate_rankings_admin_round_path(@round), method: :post, class: "btn", style: "background: #007bff; margin-left: 10px;" %>
   </div>
 </div>
 

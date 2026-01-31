@@ -1,6 +1,6 @@
 class Admin::RoundsController < ApplicationController
   before_action :require_admin
-  before_action :set_round, only: [:matches, :create_matches, :results, :update_results]
+  before_action :set_round, only: [:matches, :create_matches, :results, :update_results, :calculate_rankings]
 
   def matches
     @championship = @round.championship
@@ -28,6 +28,11 @@ class Admin::RoundsController < ApplicationController
     end
     
     redirect_to results_admin_round_path(@round), notice: 'Resultados atualizados com sucesso!'
+  end
+
+  def calculate_rankings
+    RoundScore.calculate_for_round(@round)
+    redirect_to results_admin_round_path(@round), notice: 'Rankings calculados com sucesso!'
   end
 
   private

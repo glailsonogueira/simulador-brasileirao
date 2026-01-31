@@ -4,13 +4,16 @@ class RoundScore < ApplicationRecord
   
   validates :user_id, uniqueness: { scope: :round_id }
   
+  scope :ordered, -> { order(position: :asc) }
+  scope :winners, -> { where(winner: true) }
+  
   def self.calculate_for_round(round)
     # Limpar scores anteriores
     round.round_scores.destroy_all
     
-    # Calcular para cada usuário
-    User.find_each do |user|
-      score = RoundScore.create!(user: user, round: round, total_points: 0, exact_scores: 0, correct_results: 0, special_exact_scores: 0, special_correct_results: 0, position: 0)
+    # Calcular para cada usuário que tem previsões
+    User.where(active: true).find_each do |user|
+      score = RoundScore.new(user: user, round: round)
       
       round.matches.where(finished: true).each do |match|
         prediction = user.predictions.find_by(match: match)
@@ -75,9 +78,10 @@ class RoundScore < ApplicationRecord
       ]
     end
     
-    # Atualizar posições
+    # Atualizar posições e marcar vencedor
     sorted_scores.each_with_index do |score, index|
-      score.update_column(:position, index + 1)
+      is_winner = (index == 0) # Primeiro colocado é o vencedor
+      score.update_columns(position: index + 1, winner: is_winner)
     end
   end
 end
