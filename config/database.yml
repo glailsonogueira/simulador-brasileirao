@@ -1,19 +1,16 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: 5
-  username: vagrant
-  password: vagrant
-  host: localhost
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
   <<: *default
-  database: simulador-brasileirao_development
+  database: simulador_brasileirao_development
 
 test:
   <<: *default
-  database: simulador-brasileirao_test
+  database: simulador_brasileirao_test
 
 production:
   <<: *default
-  database: simulador-brasileirao_production
+  url: <%= ENV['DATABASE_URL'] %>

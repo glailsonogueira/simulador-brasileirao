@@ -15,14 +15,16 @@ class Round < ApplicationRecord
     :aberta_previsoes
   end
   
-  # Bloqueada (rodada anterior não encerrada)
+  # Bloqueada se falta mais de 2 dias para o primeiro jogo
   def blocked?
     return false if number == 1 # Primeira rodada nunca bloqueia
+    return false if matches.empty?
     
-    previous_round = championship.rounds.find_by(number: number - 1)
-    return false if previous_round.nil?
+    first_match_time = matches.minimum(:scheduled_at)
+    return false if first_match_time.nil?
     
-    !previous_round.finished?
+    # Libera 2 dias antes do primeiro jogo
+    Time.current < (first_match_time - 2.days)
   end
   
   # Encerrada (todos jogos finalizados)
