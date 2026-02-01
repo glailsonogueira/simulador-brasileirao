@@ -15,75 +15,97 @@
 <div class="card">
   <h2 style="text-align: center; margin-bottom: 20px;">Informar Resultados</h2>
   
-  <table>
-    <thead>
-      <tr>
-        <th style="text-align: center;">Data/Hora</th>
-        <th style="text-align: right;">Mandante</th>
-        <th style="text-align: center;">Placar</th>
-        <th>Visitante</th>
-        <th style="text-align: center;">Acoes</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @matches.each do |match| %>
-        <% bg_color = match.finished? ? 'background: #e8f5e9;' : '' %>
-        <tr style="<%= bg_color %>">
-          <td style="text-align: center;"><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
-          <td style="text-align: right;">
-            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
-              <strong><%= match.home_club.name %></strong>
-              <% if match.home_club.badge_url %>
-                <%= image_tag match.home_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
-              <% else %>
-                <div style="width: 30px; height: 30px; background: <%= match.home_club.primary_color %>; border-radius: 3px;"></div>
-              <% end %>
-            </div>
-          </td>
-          <td style="text-align: center;">
-            <%= form_with model: match, url: finalize_match_admin_round_match_path(@round, match), method: :post, local: true, html: { style: "display: flex; align-items: center; justify-content: center; gap: 5px;" } do |f| %>
-              <%= f.number_field :home_score, min: 0, max: 20, disabled: match.finished?, style: "width: 50px; text-align: center; padding: 5px;" %>
-              <strong>x</strong>
-              <%= f.number_field :away_score, min: 0, max: 20, disabled: match.finished?, style: "width: 50px; text-align: center; padding: 5px;" %>
-            <% end %>
-          </td>
-          <td>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <% if match.away_club.badge_url %>
-                <%= image_tag match.away_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
-              <% else %>
-                <div style="width: 30px; height: 30px; background: <%= match.away_club.primary_color %>; border-radius: 3px;"></div>
-              <% end %>
-              <strong><%= match.away_club.name %></strong>
-            </div>
-          </td>
-          <td style="text-align: center;">
-            <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
-              <!-- Botão Finalizar -->
-              <%= form_with model: match, url: finalize_match_admin_round_match_path(@round, match), method: :post, local: true, html: { style: "display: inline;" } do |f| %>
-                <%= f.hidden_field :home_score, value: match.home_score %>
-                <%= f.hidden_field :away_score, value: match.away_score %>
-                <% disabled_attr = match.finished? ? 'disabled' : '' %>
-                <% cursor_style = match.finished? ? 'not-allowed' : 'pointer' %>
-                <% title_text = match.finished? ? 'Já finalizado' : 'Finalizar partida' %>
-                <% icon_style = match.finished? ? 'width: 32px; height: 32px; filter: grayscale(100%); opacity: 0.5;' : 'width: 32px; height: 32px;' %>
-                <button type="submit" <%= disabled_attr %> style="background: none; border: none; padding: 0; cursor: <%= cursor_style %>;" title="<%= title_text %>">
-                  <%= image_tag 'finish-icon.svg', style: icon_style %>
-                </button>
-              <% end %>
-              
-              <!-- Botão Reabrir -->
-              <% disabled_reopen = !match.finished? %>
-              <% cursor_reopen = match.finished? ? 'pointer' : 'not-allowed' %>
-              <% title_reopen = match.finished? ? 'Reabrir para edição' : 'Já está aberto' %>
-              <% icon_reopen_style = match.finished? ? 'width: 32px; height: 32px;' : 'width: 32px; height: 32px; filter: grayscale(100%); opacity: 0.5;' %>
-              <%= button_to reopen_match_admin_round_match_path(@round, match), method: :post, disabled: disabled_reopen, style: "background: none; border: none; padding: 0; cursor: #{cursor_reopen};", title: title_reopen do %>
-                <%= image_tag 'reload-icon.svg', style: icon_reopen_style %>
-              <% end %>
-            </div>
-          </td>
+  <%= form_with url: update_results_admin_round_path(@round), method: :post, local: true, id: "results-form" do %>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align: center;">Data/Hora</th>
+          <th style="text-align: right;">Mandante</th>
+          <th style="text-align: center;">Placar</th>
+          <th>Visitante</th>
+          <th style="text-align: center;">Acoes</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @matches.each do |match| %>
+          <% bg_color = match.finished? ? 'background: #e8f5e9;' : '' %>
+          <tr style="<%= bg_color %>">
+            <td style="text-align: center;"><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
+            <td style="text-align: right;">
+              <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                <strong><%= match.home_club.name %></strong>
+                <% if match.home_club.badge_url %>
+                  <%= image_tag match.home_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
+                <% else %>
+                  <div style="width: 30px; height: 30px; background: <%= match.home_club.primary_color %>; border-radius: 3px;"></div>
+                <% end %>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                <%= number_field_tag "matches[#{match.id}][home]", match.home_score, min: 0, max: 20, disabled: match.finished?, style: "width: 50px; text-align: center; padding: 5px;", id: "match_#{match.id}_home" %>
+                <strong>x</strong>
+                <%= number_field_tag "matches[#{match.id}][away]", match.away_score, min: 0, max: 20, disabled: match.finished?, style: "width: 50px; text-align: center; padding: 5px;", id: "match_#{match.id}_away" %>
+              </div>
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <% if match.away_club.badge_url %>
+                  <%= image_tag match.away_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
+                <% else %>
+                  <div style="width: 30px; height: 30px; background: <%= match.away_club.primary_color %>; border-radius: 3px;"></div>
+                <% end %>
+                <strong><%= match.away_club.name %></strong>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
+                <!-- Botão Finalizar Individual -->
+                <% if !match.finished? %>
+                  <%= button_to finalize_match_admin_round_match_path(@round, match), 
+                      method: :post, 
+                      params: { 
+                        match: { 
+                          home_score: match.home_score, 
+                          away_score: match.away_score 
+                        } 
+                      },
+                      form: { 
+                        onsubmit: "this.querySelector('input[name=\"match[home_score]\"]').value = document.getElementById('match_#{match.id}_home').value; this.querySelector('input[name=\"match[away_score]\"]').value = document.getElementById('match_#{match.id}_away').value; return confirm('Finalizar esta partida?');" 
+                      },
+                      style: "background: none; border: none; padding: 0; cursor: pointer;", 
+                      title: "Finalizar partida" do %>
+                    <%= image_tag 'finish-icon.svg', style: 'width: 32px; height: 32px;' %>
+                  <% end %>
+                <% else %>
+                  <span style="opacity: 0.5;">
+                    <%= image_tag 'finish-icon.svg', style: 'width: 32px; height: 32px; filter: grayscale(100%);' %>
+                  </span>
+                <% end %>
+                
+                <!-- Botão Reabrir -->
+                <% if match.finished? %>
+                  <%= button_to reopen_match_admin_round_match_path(@round, match), 
+                      method: :post, 
+                      form: { onsubmit: "return confirm('Reabrir esta partida para edição?');" },
+                      style: "background: none; border: none; padding: 0; cursor: pointer;", 
+                      title: "Reabrir para edição" do %>
+                    <%= image_tag 'reload-icon.svg', style: 'width: 32px; height: 32px;' %>
+                  <% end %>
+                <% else %>
+                  <span style="opacity: 0.5;">
+                    <%= image_tag 'reload-icon.svg', style: 'width: 32px; height: 32px; filter: grayscale(100%);' %>
+                  </span>
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <%= submit_tag "Salvar Todos Resultados", class: "btn", style: "background: #28a745; padding: 12px 40px; font-size: 16px;" %>
+    </div>
+  <% end %>
 </div>
