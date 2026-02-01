@@ -15,7 +15,7 @@
 <div class="card">
   <h2 style="text-align: center; margin-bottom: 20px;">Informar Resultados</h2>
   
-  <%= form_with url: update_results_admin_round_path(@round), method: :post, local: true, id: "results-form" do %>
+  <%= form_with url: finalize_all_admin_round_path(@round), method: :post, local: true do %>
     <table>
       <thead>
         <tr>
@@ -23,7 +23,7 @@
           <th style="text-align: right;">Mandante</th>
           <th style="text-align: center;">Placar</th>
           <th>Visitante</th>
-          <th style="text-align: center;">Acoes</th>
+          <th style="text-align: center;">Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -43,9 +43,9 @@
             </td>
             <td style="text-align: center;">
               <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                <%= number_field_tag "matches[#{match.id}][home]", match.home_score, min: 0, max: 20, disabled: match.finished?, style: "width: 50px; text-align: center; padding: 5px;", id: "match_#{match.id}_home" %>
+                <%= number_field_tag "matches[#{match.id}][home_score]", match.home_score, min: 0, max: 20, disabled: match.finished?, style: "width: 50px; text-align: center; padding: 5px;", id: "match_#{match.id}_home" %>
                 <strong>x</strong>
-                <%= number_field_tag "matches[#{match.id}][away]", match.away_score, min: 0, max: 20, disabled: match.finished?, style: "width: 50px; text-align: center; padding: 5px;", id: "match_#{match.id}_away" %>
+                <%= number_field_tag "matches[#{match.id}][away_score]", match.away_score, min: 0, max: 20, disabled: match.finished?, style: "width: 50px; text-align: center; padding: 5px;", id: "match_#{match.id}_away" %>
               </div>
             </td>
             <td>
@@ -62,8 +62,8 @@
               <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
                 <!-- Botão Finalizar Individual -->
                 <% if !match.finished? %>
-                  <%= button_to finalize_match_admin_round_match_path(@round, match), 
-                      method: :post, 
+                  <%= button_to finalize_admin_match_path(match), 
+                      method: :post,
                       params: { 
                         match: { 
                           home_score: match.home_score, 
@@ -71,7 +71,7 @@
                         } 
                       },
                       form: { 
-                        onsubmit: "this.querySelector('input[name=\"match[home_score]\"]').value = document.getElementById('match_#{match.id}_home').value; this.querySelector('input[name=\"match[away_score]\"]').value = document.getElementById('match_#{match.id}_away').value; return confirm('Finalizar esta partida?');" 
+                        onsubmit: "var homeField = document.getElementById('match_#{match.id}_home'); var awayField = document.getElementById('match_#{match.id}_away'); this.querySelector('input[name=\"match[home_score]\"]').value = homeField.value; this.querySelector('input[name=\"match[away_score]\"]').value = awayField.value; return confirm('Finalizar esta partida?');" 
                       },
                       style: "background: none; border: none; padding: 0; cursor: pointer;", 
                       title: "Finalizar partida" do %>
@@ -85,8 +85,8 @@
                 
                 <!-- Botão Reabrir -->
                 <% if match.finished? %>
-                  <%= button_to reopen_match_admin_round_match_path(@round, match), 
-                      method: :post, 
+                  <%= button_to reopen_admin_match_path(match), 
+                      method: :post,
                       form: { onsubmit: "return confirm('Reabrir esta partida para edição?');" },
                       style: "background: none; border: none; padding: 0; cursor: pointer;", 
                       title: "Reabrir para edição" do %>
@@ -104,8 +104,24 @@
       </tbody>
     </table>
     
-    <div style="text-align: center; margin-top: 30px;">
-      <%= submit_tag "Salvar Todos Resultados", class: "btn", style: "background: #28a745; padding: 12px 40px; font-size: 16px;" %>
-    </div>
-  <% end %>
+    <div style="text-align: center; margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+      <!-- Botão Finalizar Todas as Abertas -->
+      <% if @matches.any? { |m| !m.finished? } %>
+        <%= submit_tag "Finalizar Todas Abertas", 
+            class: "btn", 
+            style: "background: #28a745; padding: 12px 40px; font-size: 16px;", 
+            data: { confirm: 'Finalizar todas as partidas abertas?' } %>
+      <% end %>
+    <% end %>
+    
+    <!-- Botão Reabrir Todas as Fechadas -->
+    <% if @matches.any?(&:finished?) %>
+      <%= button_to "Reabrir Todas Fechadas", 
+          reopen_all_admin_round_path(@round), 
+          method: :post, 
+          class: "btn", 
+          style: "background: #ff9800; padding: 12px 40px; font-size: 16px;",
+          data: { confirm: 'Reabrir todas as partidas finalizadas?' } %>
+    <% end %>
+  </div>
 </div>

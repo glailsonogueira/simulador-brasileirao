@@ -52,15 +52,16 @@ Rails.application.routes.draw do
         get :matches
         post :create_matches
         get :results
-        post :update_results
         post :calculate_rankings
+        post :finalize_all
+        post :reopen_all
       end
-      
-      resources :matches, only: [:edit, :update] do
-        member do
-          post :finalize_match
-          post :reopen_match
-        end
+    end
+    
+    resources :matches, only: [:edit, :update] do
+      member do
+        post :finalize
+        post :reopen
       end
     end
   end
