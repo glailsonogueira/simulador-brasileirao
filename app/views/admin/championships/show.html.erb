@@ -80,10 +80,10 @@
           </div>
           <div style="display: flex; gap: 5px;">
             <%= link_to edit_admin_club_path(club), style: "text-decoration: none;", title: "Editar" do %>
-              <img src="/pen-icon.svg" alt="Editar" style="width: 24px; height: 24px;">
+              <%= image_tag 'edit-icon.svg', style: 'filter: brightness(0.5) sepia(1) hue-rotate(90deg) saturate(5); width: 32px; height: 32px;' %>
             <% end %>
             <%= button_to remove_club_admin_championship_path(@championship, club_id: club.id), method: :delete, data: { confirm: "Remover #{club.name}?" }, style: "background: transparent; border: none; cursor: pointer; padding: 0;", title: "Remover" do %>
-              <img src="/bin-icon.svg" alt="Remover" style="width: 24px; height: 24px;">
+              <%= image_tag 'bin-icon.svg', style: 'filter: brightness(0.5) sepia(1) hue-rotate(-50deg) saturate(5); width: 32px; height: 32px;' %>
             <% end %>
           </div>
         </div>

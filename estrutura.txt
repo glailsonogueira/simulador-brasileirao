@@ -1,0 +1,175 @@
+.
+├── Dockerfile
+├── Gemfile
+├── Gemfile.backup
+├── Gemfile.lock
+├── README.md
+├── Rakefile
+├── Vagrantfile
+├── app
+│   ├── app
+│   │   └── views
+│   ├── assets
+│   │   ├── config
+│   │   ├── images
+│   │   └── stylesheets
+│   ├── channels
+│   │   └── application_cable
+│   ├── controllers
+│   │   ├── admin
+│   │   ├── application_controller.rb
+│   │   ├── championships_controller.rb
+│   │   ├── concerns
+│   │   ├── home_controller.rb
+│   │   ├── omniauth_callbacks_controller.rb
+│   │   ├── predictions_controller.rb
+│   │   ├── rankings_controller.rb
+│   │   ├── rounds_controller.rb
+│   │   ├── sessions_controller.rb
+│   │   └── users_controller.rb
+│   ├── helpers
+│   │   ├── application_helper.rb
+│   │   └── breadcrumb_helper.rb
+│   ├── javascript
+│   │   ├── application.js
+│   │   └── controllers
+│   ├── jobs
+│   │   └── application_job.rb
+│   ├── mailers
+│   │   └── application_mailer.rb
+│   ├── models
+│   │   ├── application_record.rb
+│   │   ├── championship.rb
+│   │   ├── championship_club.rb
+│   │   ├── club.rb
+│   │   ├── club_stadium.rb
+│   │   ├── concerns
+│   │   ├── match.rb
+│   │   ├── overall_standing.rb
+│   │   ├── prediction.rb
+│   │   ├── round.rb
+│   │   ├── round_score.rb
+│   │   ├── stadium.rb
+│   │   └── user.rb
+│   ├── services
+│   │   └── score_calculator_service.rb
+│   └── views
+│       ├── admin
+│       ├── home
+│       ├── layouts
+│       ├── predictions
+│       ├── pwa
+│       ├── rankings
+│       ├── rounds
+│       ├── sessions
+│       └── users
+├── bin
+│   ├── brakeman
+│   ├── docker-entrypoint
+│   ├── importmap
+│   ├── rails
+│   ├── rake
+│   ├── render-build.sh
+│   ├── rubocop
+│   └── setup
+├── config
+│   ├── application.rb
+│   ├── boot.rb
+│   ├── cable.yml
+│   ├── credentials.yml.enc
+│   ├── database.yml
+│   ├── environment.rb
+│   ├── environments
+│   │   ├── development.rb
+│   │   ├── production.rb
+│   │   └── test.rb
+│   ├── importmap.rb
+│   ├── initializers
+│   │   ├── assets.rb
+│   │   ├── content_security_policy.rb
+│   │   ├── filter_parameter_logging.rb
+│   │   ├── inflections.rb
+│   │   ├── omniauth.rb
+│   │   └── permissions_policy.rb
+│   ├── locales
+│   │   └── en.yml
+│   ├── master.key
+│   ├── puma.rb
+│   ├── routes.rb
+│   ├── routes.rb.backup
+│   └── storage.yml
+├── config.ru
+├── db
+│   ├── migrate
+│   │   ├── 20260125000001_create_users.rb
+│   │   ├── 20260125000002_create_clubs.rb
+│   │   ├── 20260125000003_create_rounds.rb
+│   │   ├── 20260125000004_create_matches.rb
+│   │   ├── 20260125000005_create_predictions.rb
+│   │   ├── 20260125000006_create_round_scores.rb
+│   │   ├── 20260125000007_create_championships.rb
+│   │   ├── 20260125000008_create_championship_clubs.rb
+│   │   ├── 20260125000009_create_overall_standings.rb
+│   │   ├── 20260125000010_add_championship_to_rounds.rb
+│   │   ├── 20260125000011_create_active_storage_tables.rb
+│   │   ├── 20260126201657_rename_match_result_columns.rb
+│   │   ├── 20260127143238_add_active_to_users.rb
+│   │   ├── 20260128015256_add_badge_filename_to_clubs.rb
+│   │   ├── 20260129020529_add_predicted_at_to_predictions.rb
+│   │   ├── 20260129022011_add_favorite_club_to_championships.rb
+│   │   ├── 20260129152699_create_stadiums.rb
+│   │   ├── 20260129152700_create_club_stadiums.rb
+│   │   ├── 20260129152701_add_stadiums_to_clubs.rb
+│   │   └── 20260129152702_add_stadium_to_matches.rb
+│   ├── schema.rb
+│   ├── seeds.rb
+│   ├── seeds.rb.backup
+│   └── seeds_users.rb
+├── estrutura.txt
+├── lib
+│   ├── assets
+│   └── tasks
+│       └── championship.rake
+├── public
+│   ├── 404.html
+│   ├── 406-unsupported-browser.html
+│   ├── 422.html
+│   ├── 500.html
+│   ├── badges
+│   │   ├── athletico-paranaense.png
+│   │   ├── atletico-mineiro.png
+│   │   ├── bahia.png
+│   │   ├── botafogo.png
+│   │   ├── chapecoense.png
+│   │   ├── corinthians.png
+│   │   ├── coritiba.png
+│   │   ├── cruzeiro.png
+│   │   ├── flamengo.png
+│   │   ├── fluminense.png
+│   │   ├── gremio.png
+│   │   ├── internacional.png
+│   │   ├── mirassol.png
+│   │   ├── palmeiras.png
+│   │   ├── red-bull-bragantino.png
+│   │   ├── remo.png
+│   │   ├── santos.png
+│   │   ├── sao-paulo.png
+│   │   ├── vasco-da-gama.png
+│   │   └── vitoria.png
+│   ├── bin-icon.svg
+│   ├── eye-icon.svg
+│   ├── favicon.png
+│   ├── icon.png
+│   ├── icon.svg
+│   ├── pen-icon.svg
+│   ├── robots.txt
+│   ├── star-icon.svg
+│   └── view-icon.svg
+├── render.yaml
+├── storage
+│   ├── cadastro_previsoes_usuario.xlsx
+│   └── rodadas_brasileirao.xlsx
+└── vendor
+    └── javascript
+
+45 directories, 127 files

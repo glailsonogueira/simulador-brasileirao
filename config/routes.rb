@@ -56,8 +56,17 @@ Rails.application.routes.draw do
         post :finalize_all
         post :reopen_all
       end
+      
+      # Matches aninhados dentro de rounds
+      resources :matches, only: [:edit, :update] do
+        member do
+          post :finalize
+          post :reopen
+        end
+      end
     end
     
+    # Manter matches independentes para acesso direto
     resources :matches, only: [:edit, :update] do
       member do
         post :finalize
