@@ -48,13 +48,20 @@ Rails.application.routes.draw do
     end
     
     resources :rounds, only: [] do
-      get :matches, on: :member
-      post :create_matches, on: :member
-      get :results, on: :member
-      post :update_results, on: :member
-      post :calculate_rankings, on: :member
+      member do
+        get :matches
+        post :create_matches
+        get :results
+        post :update_results
+        post :calculate_rankings
+      end
       
-      resources :matches, only: [:edit, :update]
+      resources :matches, only: [:edit, :update] do
+        member do
+          post :finalize_match
+          post :reopen_match
+        end
+      end
     end
   end
   

@@ -20,8 +20,9 @@
         <tr>
           <th style="text-align: center;">Data/Hora</th>
           <th style="text-align: center;">Estadio</th>
-          <th style="text-align: center;">Mandante</th>
-          <th style="text-align: center;">Visitante</th>
+          <th style="text-align: right;">Mandante</th>
+          <th style="text-align: center;">vs</th>
+          <th>Visitante</th>
           <th style="text-align: center;">Status</th>
           <th style="text-align: center;">Acoes</th>
         </tr>
@@ -38,8 +39,27 @@
                 <span style="color: #999;">-</span>
               <% end %>
             </td>
-            <td style="text-align: center;"><strong><%= match.home_club.name %></strong></td>
-            <td style="text-align: center;"><strong><%= match.away_club.name %></strong></td>
+            <td style="text-align: right;">
+              <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                <strong><%= match.home_club.name %></strong>
+                <% if match.home_club.badge_url %>
+                  <%= image_tag match.home_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
+                <% else %>
+                  <div style="width: 30px; height: 30px; background: <%= match.home_club.primary_color %>; border-radius: 3px;"></div>
+                <% end %>
+              </div>
+            </td>
+            <td style="text-align: center; color: #666;">x</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <% if match.away_club.badge_url %>
+                  <%= image_tag match.away_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
+                <% else %>
+                  <div style="width: 30px; height: 30px; background: <%= match.away_club.primary_color %>; border-radius: 3px;"></div>
+                <% end %>
+                <strong><%= match.away_club.name %></strong>
+              </div>
+            </td>
             <td style="text-align: center;">
               <% if match.finished? %>
                 <span style="color: #28a745; font-weight: bold;">Finalizado</span>

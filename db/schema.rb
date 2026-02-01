@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_01_29_152701) do
+ActiveRecord::Schema[7.2].define(version: 2026_01_29_152702) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -74,6 +74,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_29_152701) do
     t.datetime "updated_at", null: false
     t.index ["club_id", "stadium_id"], name: "index_club_stadiums_on_club_id_and_stadium_id", unique: true
     t.index ["club_id"], name: "index_club_stadiums_on_club_id"
+    t.index ["stadium_id"], name: "index_club_stadiums_on_stadium_id"
   end
 
   create_table "clubs", force: :cascade do |t|
@@ -176,7 +177,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_01_29_152701) do
     t.string "state", limit: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["city", "state"], name: "index_stadiums_on_city_and_state"
     t.index ["name"], name: "index_stadiums_on_name"
   end
 

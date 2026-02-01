@@ -8,6 +8,9 @@ class RoundScore < ApplicationRecord
   scope :winners, -> { where(winner: true) }
   
   def self.calculate_for_round(round)
+    # Só calcular se pelo menos 1 jogo foi finalizado
+    return unless round.matches.where(finished: true).any?
+    
     # Limpar scores anteriores
     round.round_scores.destroy_all
     
@@ -15,6 +18,7 @@ class RoundScore < ApplicationRecord
     User.where(active: true).find_each do |user|
       score = RoundScore.new(user: user, round: round)
       
+      # APENAS jogos finalizados
       round.matches.where(finished: true).each do |match|
         prediction = user.predictions.find_by(match: match)
         next unless prediction

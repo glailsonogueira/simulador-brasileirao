@@ -6,42 +6,70 @@
   <p style="font-size: 18px; color: #666; margin-top: 10px;">
     <strong><%= @championship.full_name %></strong>
   </p>
-  <div style="margin-top: 15px;">
+  <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
     <%= link_to "Voltar", rankings_path, class: "btn" %>
     <% if current_user&.admin? %>
-      <%= button_to "Recalcular Todos Rankings", recalculate_all_rankings_championship_path(@championship), method: :post, class: "btn", style: "background: #007bff; margin-left: 10px;" %>
+      <%= button_to "Recalcular", recalculate_all_rankings_championship_path(@championship), method: :post, class: "btn", style: "background: #007bff;" %>
     <% end %>
   </div>
 </div>
 
 <div class="card">
-  <h2 style="text-align: center; margin-bottom: 20px;">Classificacao Geral</h2>
+  <h2 style="text-align: center; margin-bottom: 30px;">Classificacao Geral</h2>
   
   <% if @overall_standings.any? %>
-    <table>
-      <thead>
-        <tr>
-          <th style="text-align: center;">Posicao</th>
-          <th style="text-align: center;">Usuario</th>
-          <th style="text-align: center;">Pontos</th>
-          <th style="text-align: center;">Acoes</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @overall_standings.each do |standing| %>
-          <tr>
-            <td style="text-align: center;"><strong><%= standing.position %>°</strong></td>
-            <td style="text-align: center;"><%= standing.user.name %></td>
-            <td style="text-align: center;"><strong><%= standing.total_points %></strong></td>
-            <td style="text-align: center;">
-              <%= link_to user_detail_rankings_path(championship_id: @championship.id, user_id: standing.user.id), style: "text-decoration: none; font-size: 24px;", title: "Detalhes" do %>
-                &#128200;
+    <!-- Pódio (Top 3) -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px;">
+      <% @overall_standings.first(3).each_with_index do |standing, index| %>
+        <div style="text-align: center; padding: 30px; background: <%= index == 0 ? '#FFD700' : index == 1 ? '#C0C0C0' : '#CD7F32' %>; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+          <div style="font-size: 48px; margin-bottom: 10px;">
+            <%= raw(index == 0 ? '&#129351;' : index == 1 ? '&#129352;' : '&#129353;') %>
+          </div>
+          <h3 style="color: #000; margin-bottom: 10px; font-size: 20px;"><%= standing.user.name %></h3>
+          <div style="font-size: 32px; font-weight: bold; color: #000; margin-bottom: 5px;">
+            <%= standing.total_points %> pts
+          </div>
+          <div style="color: #333; font-size: 14px;">
+            <%= standing.rounds_won %> <%= standing.rounds_won == 1 ? 'vitória' : 'vitórias' %>
+          </div>
+          <%= link_to user_detail_rankings_path(championship_id: @championship.id, user_id: standing.user.id), style: "display: inline-block; margin-top: 15px; padding: 8px 20px; background: #000080; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;" do %>
+            Ver Detalhes
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Restante do Ranking (4º em diante) -->
+    <% if @overall_standings.count > 3 %>
+      <h3 style="text-align: center; margin-bottom: 20px; color: #666;">Demais Classificados</h3>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+        <% @overall_standings[3..-1].each do |standing| %>
+          <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+              <div style="font-size: 24px; font-weight: bold; color: #000080; min-width: 40px;">
+                <%= standing.position %>º
+              </div>
+              <div>
+                <div style="font-weight: bold; font-size: 16px; color: #000;">
+                  <%= standing.user.name %>
+                </div>
+                <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                  <%= standing.rounds_won %> <%= standing.rounds_won == 1 ? 'vitória' : 'vitórias' %>
+                </div>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 24px; font-weight: bold; color: #000080;">
+                <%= standing.total_points %> pts
+              </div>
+              <%= link_to user_detail_rankings_path(championship_id: @championship.id, user_id: standing.user.id), style: "display: inline-block; margin-top: 8px; padding: 5px 15px; background: #000080; color: white; text-decoration: none; border-radius: 5px; font-size: 12px;" do %>
+                Detalhes
               <% end %>
-            </td>
-          </tr>
+            </div>
+          </div>
         <% end %>
-      </tbody>
-    </table>
+      </div>
+    <% end %>
   <% else %>
     <p style="text-align: center; color: #666;">Nenhum ranking disponivel ainda. Clique em "Recalcular" para gerar.</p>
   <% end %>

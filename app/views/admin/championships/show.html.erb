@@ -80,10 +80,10 @@
           </div>
           <div style="display: flex; gap: 5px;">
             <%= link_to edit_admin_club_path(club), style: "text-decoration: none;", title: "Editar" do %>
-              <img src="/pen-icon.png" alt="Editar" style="width: 20px; height: 20px;">
+              <img src="/pen-icon.svg" alt="Editar" style="width: 24px; height: 24px;">
             <% end %>
             <%= button_to remove_club_admin_championship_path(@championship, club_id: club.id), method: :delete, data: { confirm: "Remover #{club.name}?" }, style: "background: transparent; border: none; cursor: pointer; padding: 0;", title: "Remover" do %>
-              <img src="/bin-icon.png" alt="Remover" style="width: 20px; height: 20px;">
+              <img src="/bin-icon.svg" alt="Remover" style="width: 24px; height: 24px;">
             <% end %>
           </div>
         </div>
