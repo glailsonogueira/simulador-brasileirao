@@ -12,158 +12,333 @@
 </div>
 
 <div class="card">
-  <%= form_with url: update_batch_predictions_path(championship_id: @championship.id, round_id: @round.id), method: :patch, local: true, id: "predictions-form" do %>
-    <table>
-      <thead>
-        <tr>
-          <th>Data/Hora</th>
-          <th>Estadio</th>
-          <th style="text-align: right;">Mandante</th>
-          <th style="text-align: center;">Sua Previsao</th>
-          <th>Visitante</th>
-          <th style="text-align: center;">Status</th>
-          <% if @round.all_matches_finished? %>
-            <th style="text-align: center;">Placar Final</th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <% @matches.each do |match| %>
-          <% can_predict = match.can_predict? %>
-          <% is_locked = match.locked? %>
-          <% is_favorite_home = @championship.favorite_club_id.present? && match.home_club_id == @championship.favorite_club_id %>
-          <% is_favorite_away = @championship.favorite_club_id.present? && match.away_club_id == @championship.favorite_club_id %>
-          <tr style="<%= 'opacity: 0.6;' if is_locked %>">
-            <td><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
-            
-            <td>
-              <% if match.stadium %>
-                <strong><%= match.stadium.name %></strong><br>
-                <small style="color: #666;"><%= match.stadium.full_location %></small>
-              <% else %>
-                <span style="color: #999;">-</span>
+  <!-- Acordeão: Minhas Previsões (ocupa largura total) -->
+  <!-- Dados de quantidade de previsões, pontos e medalha (se existir) -->
+  <% user_predictions = @predictions %>
+    <% predictions_count = user_predictions.values.compact.count %>
+    <% user_ranking = @user_rankings[current_user.id] %>
+    <% current_user_predictions = user_predictions.values.compact.count %>
+    <% 
+      total_points = if @round.all_matches_finished?
+        @round_scores[current_user.id]&.total_points || 0
+      else
+        0
+      end
+      position = @user_rankings[current_user.id] || 0
+      medal = case position
+              when 1 then 'gold-medal.svg'
+              when 2 then 'silver-medal.svg'
+              when 3 then 'bronze-medal.svg'
+              else nil
+              end
+    %>       
+  <div class="accordion-item" id="predictions-accordion-item" style="border: 1px solid #ddd; border-radius: 5px; margin-bottom: 20px;">
+    <div class="accordion-header" style="padding: 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 5px;" onclick="toggleAccordion('predictions-accordion-content', 'accordion-icon-mine')">
+      <div style="flex: 1; overflow: hidden;">
+        <div style="font-size: 16px; font-weight: bold; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          <h2 style="margin: 0; color: #000080; font-size: 20px;">📝 Minhas Previsões</h2>
+        </div>
+        <div style="font-size: 12px; color: #666;">
+          <% if predictions_count > 0 %>
+            <%= predictions_count %> previsões
+            <% if @round.all_matches_finished? && position > 0 %>
+              · <strong style="color: #28a745;"><%= total_points %> pts</strong>
+              · <span style="color: #666;"><%= position %>º</span>
+              <% if medal %>
+                <span style="font-size: 18px; margin-left: 3px;"><%= image_tag medal, style: 'width: 24px; height: 24px;' %></span>
               <% end %>
-            </td>
-            
-            <td style="text-align: right;">
-              <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
-                <strong><%= match.home_club.name %></strong>
-                <% if is_favorite_home %>
-                  <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
-                <% end %>
-                <% if match.home_club.badge_url %>
-                  <%= image_tag match.home_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
-                <% else %>
-                  <div style="width: 30px; height: 30px; background: <%= match.home_club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
-                <% end %>
-              </div>
-            </td>
-            
-            <td style="text-align: center;">
-              <% prediction = @predictions[match.id] %>
-              <% if can_predict %>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
-                  <%= number_field_tag "predictions[#{match.id}][home]", prediction&.home_score, 
-                      min: 0, max: 20, 
-                      class: "prediction-field",
-                      data: { original: prediction&.home_score },
-                      style: "width: 50px; text-align: center; padding: 5px;" %>
-                  <strong>x</strong>
-                  <%= number_field_tag "predictions[#{match.id}][away]", prediction&.away_score, 
-                      min: 0, max: 20,
-                      class: "prediction-field",
-                      data: { original: prediction&.away_score },
-                      style: "width: 50px; text-align: center; padding: 5px;" %>
-                </div>
-              <% else %>
-                <% if prediction %>
-                  <strong><%= prediction.home_score %> x <%= prediction.away_score %></strong>
-                <% else %>
-                  <span style="color: #999;">-</span>
-                <% end %>
-              <% end %>
-            </td>
-            
-            <td>
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <% if match.away_club.badge_url %>
-                  <%= image_tag match.away_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
-                <% else %>
-                  <div style="width: 30px; height: 30px; background: <%= match.away_club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
-                <% end %>
-                <% if is_favorite_away %>
-                  <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
-                <% end %>
-                <strong><%= match.away_club.name %></strong>
-              </div>
-            </td>
-            
-            <td style="text-align: center;">
-              <% if match.finished? %>
-                <span style="color: #28a745; font-weight: bold;">Finalizado</span>
-              <% elsif is_locked %>
-                <span style="color: #dc3545; font-weight: bold;">Bloqueado</span>
-              <% else %>
-                <span style="color: #ffc107; font-weight: bold;">Aberto</span>
-              <% end %>
-            </td>
-            
-            <% if @round.all_matches_finished? %>
-              <td style="text-align: center;">
-                <% if match.finished? %>
-                  <strong style="color: #28a745;"><%= match.home_score %> x <%= match.away_score %></strong>
-                <% else %>
-                  <span style="color: #999;">-</span>
-                <% end %>
-              </td>
             <% end %>
-          </tr>
+          <% else %>
+            <span style="color: #dc3545;">Nenhuma previsão</span>
+          <% end %>
+        </div>
+      </div>
+      <div class="accordion-icon" id="accordion-icon-mine" style="transition: transform 0.3s;">
+        <%= image_tag 'arrow-icon.svg', style: 'width: 32px; height: 32px;' %>
+      </div>
+    </div>
+    <div class="accordion-content" id="predictions-accordion-content" style="display: none; padding: 20px; background: #fff; border-top: 1px solid #ddd;">
+      <%= form_with url: update_batch_predictions_path(championship_id: @championship.id, round_id: @round.id), method: :patch, local: true, id: "predictions-form" do %>
+        <table>
+          <thead>
+            <tr>
+              <th>Data/Hora</th>
+              <th>Estadio</th>
+              <th style="text-align: right;">Mandante</th>
+              <th style="text-align: center;">Sua Previsao</th>
+              <th>Visitante</th>
+              <th style="text-align: center;">Status</th>
+              <% if @round.all_matches_finished? %>
+                <th style="text-align: center;">Placar Final</th>
+                <th style="text-align: center;">Pontos</th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% @matches.each do |match| %>
+              <% can_predict = match.can_predict? %>
+              <% is_locked = match.locked? %>
+              <% is_favorite_home = @championship.favorite_club_id.present? && match.home_club_id == @championship.favorite_club_id %>
+              <% is_favorite_away = @championship.favorite_club_id.present? && match.away_club_id == @championship.favorite_club_id %>
+              <% prediction = @predictions[match.id] %>
+              <tr style="<%= 'opacity: 0.6;' if is_locked %>">
+                <td><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
+                
+                <td>
+                  <% if match.stadium %>
+                    <strong><%= match.stadium.name %></strong><br>
+                    <small style="color: #666;"><%= match.stadium.full_location %></small>
+                  <% else %>
+                    <span style="color: #999;">-</span>
+                  <% end %>
+                </td>
+                
+                <td style="text-align: right;">
+                  <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px;">
+                    <strong><%= match.home_club.name %></strong>
+                    <% if is_favorite_home %>
+                      <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
+                    <% end %>
+                    <% if match.home_club.badge_url %>
+                      <%= image_tag match.home_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
+                    <% else %>
+                      <div style="width: 30px; height: 30px; background: <%= match.home_club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
+                    <% end %>
+                  </div>
+                </td>
+                
+                <td style="text-align: center;">
+                  <% if can_predict %>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+                      <%= number_field_tag "predictions[#{match.id}][home]", prediction&.home_score, 
+                          min: 0, max: 20, 
+                          class: "prediction-field",
+                          data: { original: prediction&.home_score },
+                          style: "width: 50px; text-align: center; padding: 5px;" %>
+                      <strong>x</strong>
+                      <%= number_field_tag "predictions[#{match.id}][away]", prediction&.away_score, 
+                          min: 0, max: 20,
+                          class: "prediction-field",
+                          data: { original: prediction&.away_score },
+                          style: "width: 50px; text-align: center; padding: 5px;" %>
+                    </div>
+                  <% else %>
+                    <% if prediction %>
+                      <strong><%= prediction.home_score %> x <%= prediction.away_score %></strong>
+                    <% else %>
+                      <span style="color: #999;">-</span>
+                    <% end %>
+                  <% end %>
+                </td>
+                
+                <td>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <% if match.away_club.badge_url %>
+                      <%= image_tag match.away_club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
+                    <% else %>
+                      <div style="width: 30px; height: 30px; background: <%= match.away_club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
+                    <% end %>
+                    <% if is_favorite_away %>
+                      <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
+                    <% end %>
+                    <strong><%= match.away_club.name %></strong>
+                  </div>
+                </td>
+                
+                <td style="text-align: center;">
+                  <% if match.finished? %>
+                    <span style="color: #28a745; font-weight: bold;">Finalizado</span>
+                  <% elsif is_locked %>
+                    <span style="color: #dc3545; font-weight: bold;">Bloqueado</span>
+                  <% else %>
+                    <span style="color: #ffc107; font-weight: bold;">Aberto</span>
+                  <% end %>
+                </td>
+                
+                <% if @round.all_matches_finished? %>
+                  <td style="text-align: center;">
+                    <% if match.finished? %>
+                      <strong style="color: #28a745;"><%= match.home_score %> x <%= match.away_score %></strong>
+                    <% else %>
+                      <span style="color: #999;">-</span>
+                    <% end %>
+                  </td>
+                  <td style="text-align: center;">
+                    <% if match.finished? && prediction %>
+                      <% points = calculate_match_points(prediction, match) %>
+                      <strong style="color: <%= points > 0 ? '#28a745' : '#999' %>; font-size: 16px;">
+                        <%= points %> pts
+                      </strong>
+                    <% else %>
+                      <span style="color: #999;">-</span>
+                    <% end %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        
+        <% if @matches.any? { |m| m.can_predict? } %>
+          <%= submit_tag "Salvar Previsoes", id: "save-button", class: "btn", style: "margin-top: 20px;", disabled: true %>
+        <% else %>
+          <p style="text-align: center; color: #999; margin-top: 20px;">Todos os jogos estao bloqueados ou finalizados.</p>
         <% end %>
-      </tbody>
-    </table>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Grid de Acordeões: Previsões de Outros Usuários (2 por linha) -->
+  <% if @all_users.present? %>
+    <h3 style="margin: 30px 0 15px 0; color: #000080;">👥 Previsões de Outros Participantes</h3>
     
-    <% if @matches.any? { |m| m.can_predict? } %>
-      <%= submit_tag "Salvar Previsoes", id: "save-button", class: "btn", style: "margin-top: 20px;", disabled: true %>
-    <% else %>
-      <p style="text-align: center; color: #999; margin-top: 20px;">Todos os jogos estao bloqueados ou finalizados.</p>
-    <% end %>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+      <% @all_users.each_with_index do |user, index| %>
+        <% user_predictions = @other_users_predictions[user] || {} %>
+        <% predictions_count = user_predictions.values.compact.count %>
+        <% 
+          total_points = if @round.all_matches_finished?
+            @round_scores[user.id]&.total_points || 0
+          else
+            0
+          end
+          position = @user_rankings[user.id] || 0
+          medal = case position
+            when 1 then 'gold-medal.svg'
+            when 2 then 'silver-medal.svg'
+            when 3 then 'bronze-medal.svg'
+          else nil
+          end
+        %>
+        
+        <div class="accordion-item" style="border: 1px solid #ddd; border-radius: 5px;">
+          <div class="accordion-header" style="padding: 12px; background: #f0f0f0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-radius: 5px;" onclick="toggleAccordion('user-predictions-<%= user.id %>', 'accordion-icon-user-<%= user.id %>')">
+            <div style="flex: 1; overflow: hidden;">
+              <div style="font-size: 16px; font-weight: bold; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                <%= user.name %>
+              </div>
+              <div style="font-size: 12px; color: #666;">
+                <% if predictions_count > 0 %>
+                  <%= predictions_count %> previsões realizadas
+                  <% if @round.all_matches_finished? && position > 0 %>
+                    · <strong style="color: #28a745;"><%= total_points %> pts</strong>
+                    · <span style="color: #666;"><%= position %>º</span>
+                    <% if medal %>
+                      <span style="font-size: 18px; margin-left: 3px;"><%= image_tag medal, style: 'width: 24px; height: 24px;' %></span>
+                    <% end %>
+                  <% end %>
+                <% else %>
+                  <span style="color: #dc3545;">Nenhuma previsão</span>
+                <% end %>
+              </div>
+            </div>
+            <div class="accordion-icon" id="accordion-icon-user-<%= user.id %>" style="transition: transform 0.3s; margin-left: 10px;">
+              <%= image_tag 'arrow-icon.svg', style: 'width: 32px; height: 28px;' %>
+            </div>
+          </div>
+          
+          <div class="accordion-content" id="user-predictions-<%= user.id %>" style="display: none; padding: 15px; background: #fff; border-top: 1px solid #ddd;">
+            <% if predictions_count > 0 %>
+              <table style="width: 100%; font-size: 14px;">
+                <thead>
+                  <tr style="border-bottom: 2px solid #ddd;">
+                    <th style="text-align: right; padding: 5px; font-size: 12px; color: #666;">Mandante</th>
+                    <th style="text-align: center; padding: 5px; font-size: 12px; color: #666;">Previsão</th>
+                    <th style="text-align: left; padding: 5px; font-size: 12px; color: #666;">Visitante</th>
+                    <% if @round.all_matches_finished? %>
+                      <th style="text-align: center; padding: 5px; font-size: 12px; color: #666;">Pts</th>
+                    <% end %>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @matches.each do |match| %>
+                    <% prediction = user_predictions[match.id] %>
+                    <% if prediction %>
+                      <tr style="border-bottom: 1px solid #eee;">
+                        <td style="text-align: right; padding: 8px 5px;">
+                          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 5px;">
+                            <span style="font-size: 12px;"><%= match.home_club.name %></span>
+                            <% if match.home_club.badge_url %>
+                              <%= image_tag match.home_club.badge_url, style: "width: 20px; height: 20px; object-fit: contain;" %>
+                            <% else %>
+                              <div style="width: 20px; height: 20px; background: <%= match.home_club.primary_color || '#ccc' %>; border-radius: 2px;"></div>
+                            <% end %>
+                          </div>
+                        </td>
+                        
+                        <td style="text-align: center; padding: 8px 5px; min-width: 50px;">
+                          <strong style="font-size: 14px; color: #007bff;">
+                            <%= prediction.home_score %> x <%= prediction.away_score %>
+                          </strong>
+                        </td>
+                        
+                        <td style="text-align: left; padding: 8px 5px;">
+                          <div style="display: flex; align-items: center; gap: 5px;">
+                            <% if match.away_club.badge_url %>
+                              <%= image_tag match.away_club.badge_url, style: "width: 20px; height: 20px; object-fit: contain;" %>
+                            <% else %>
+                              <div style="width: 20px; height: 20px; background: <%= match.away_club.primary_color || '#ccc' %>; border-radius: 2px;"></div>
+                            <% end %>
+                            <span style="font-size: 12px;"><%= match.away_club.name %></span>
+                          </div>
+                        </td>
+                        
+                        <% if @round.all_matches_finished? %>
+                          <td style="text-align: center; padding: 8px 5px;">
+                            <% if match.finished? %>
+                              <% points = calculate_match_points(prediction, match) %>
+                              <strong style="color: <%= points > 0 ? '#28a745' : '#999' %>; font-size: 13px;">
+                                <%= points %>
+                              </strong>
+                            <% else %>
+                              <span style="color: #999;">-</span>
+                            <% end %>
+                          </td>
+                        <% end %>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                </tbody>
+              </table>
+            <% else %>
+              <p style="text-align: center; color: #999; padding: 20px;">
+                Nenhuma previsão realizada nesta rodada
+              </p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
   <% end %>
 </div>
 
+<style>
+  /* Responsividade: em telas pequenas, 1 coluna */
+  @media (max-width: 768px) {
+    div[style*="grid-template-columns: repeat(2, 1fr)"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const saveButton = document.getElementById('save-button');
-    const predictionFields = document.querySelectorAll('.prediction-field');
+  function toggleAccordion(contentId, iconId) {
+    const content = document.getElementById(contentId);
+    const icon = document.getElementById(iconId);
     
-    if (!saveButton || predictionFields.length === 0) return;
-    
-    function checkForChanges() {
-      let hasChanges = false;
-      
-      predictionFields.forEach(field => {
-        const originalValue = field.dataset.original || '';
-        const currentValue = field.value || '';
-        
-        if (originalValue !== currentValue) {
-          hasChanges = true;
-        }
-      });
-      
-      saveButton.disabled = !hasChanges;
-      saveButton.style.opacity = hasChanges ? '1' : '0.5';
-      saveButton.style.cursor = hasChanges ? 'pointer' : 'not-allowed';
+    if (content.style.display === 'none' || content.style.display === '') {
+      content.style.display = 'block';
+      icon.style.transform = 'rotate(180deg)';
+    } else {
+      content.style.display = 'none';
+      icon.style.transform = 'rotate(0deg)';
     }
-    
-    predictionFields.forEach(field => {
-      field.addEventListener('input', checkForChanges);
-      field.addEventListener('change', checkForChanges);
-    });
-    
-    // Verificar no carregamento
-    checkForChanges();
-  });
+  }
+
+  document.addEventListener('DOMContentLoaded', initPredictions);
+  document.addEventListener('turbo:load', initPredictions);
   
-  document.addEventListener('turbo:load', function() {
+  function initPredictions() {
     const saveButton = document.getElementById('save-button');
     const predictionFields = document.querySelectorAll('.prediction-field');
     
@@ -192,5 +367,5 @@
     });
     
     checkForChanges();
-  });
+  }
 </script>

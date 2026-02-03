@@ -25,6 +25,33 @@ class User < ApplicationRecord
     active
   end
   
+  # ===== MÉTODOS PARA RESET DE SENHA =====
+  
+  # Gera token de reset de senha
+  def generate_password_reset_token
+    self.reset_password_token = SecureRandom.urlsafe_base64
+    self.reset_password_sent_at = Time.current
+    save(validate: false)
+  end
+  
+  # Verifica se o token de reset ainda é válido (expira em 2 horas)
+  def password_reset_token_valid?
+    reset_password_sent_at.present? && reset_password_sent_at > 2.hours.ago
+  end
+  
+  # Reseta a senha
+  def reset_password(new_password)
+    self.password = new_password
+    self.reset_password_token = nil
+    self.reset_password_sent_at = nil
+    save
+  end
+  
+  # Busca usuário por token de reset
+  def self.find_by_password_reset_token(token)
+    find_by(reset_password_token: token)
+  end
+  
   private
   
   def password_required?
