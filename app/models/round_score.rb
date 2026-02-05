@@ -82,9 +82,12 @@ class RoundScore < ApplicationRecord
       ]
     end
     
-    # Atualizar posições e marcar vencedor
+    # Verificar se TODOS os jogos da rodada foram finalizados
+    all_matches_finished = round.matches.all?(&:finished?)
+    
+    # Atualizar posições e marcar vencedor APENAS se a rodada estiver completa
     sorted_scores.each_with_index do |score, index|
-      is_winner = (index == 0) # Primeiro colocado é o vencedor
+      is_winner = all_matches_finished && (index == 0) # Primeiro colocado é o vencedor APENAS se rodada completa
       score.update_columns(position: index + 1, winner: is_winner)
     end
   end

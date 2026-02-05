@@ -17,7 +17,7 @@
   <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
     <% @rounds.each do |round| %>
       <% status = round.status_for_user(current_user) %>
-      <% can_access = status != :bloqueada %>
+      <% can_access = round.can_access_predictions? %>
       
       <% if can_access %>
         <%= link_to round_prediction_path(championship_id: @championship.id, round_id: round.id), style: "text-decoration: none;" do %>

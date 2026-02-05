@@ -4,6 +4,14 @@ class RoundsController < ApplicationController
   def show
     @championship = Championship.find(params[:championship_id])
     @round = @championship.rounds.find(params[:round_id])
+
+    # Verificar se o usuário pode acessar esta rodada
+    unless @round.can_access_predictions?
+      redirect_to championship_predictions_path(championship_id: @championship.id), 
+                  alert: "Esta rodada está bloqueada. Aguarde a rodada anterior ser finalizada ou que falte menos de 5 dias para o primeiro jogo."
+      return
+    end
+
     @matches = @round.matches.includes(:home_club, :away_club, :stadium).order(:scheduled_at)
     @predictions = current_user.predictions.where(match: @matches).index_by(&:match_id)
     

@@ -14,7 +14,8 @@
 <div class="card">
   <!-- Acordeão: Minhas Previsões (ocupa largura total) -->
   <!-- Dados de quantidade de previsões, pontos e medalha (se existir) -->
-  <% user_predictions = @predictions %>
+    <% user_predictions = @predictions %>
+    <% can_edit_round = @round.can_edit_predictions? %>
     <% predictions_count = user_predictions.values.compact.count %>
     <% user_ranking = @user_rankings[current_user.id] %>
     <% current_user_predictions = user_predictions.values.compact.count %>
@@ -76,12 +77,12 @@
           </thead>
           <tbody>
             <% @matches.each do |match| %>
-              <% can_predict = match.can_predict? %>
+              <% can_predict = can_edit_round && match.can_predict? %>
               <% is_locked = match.locked? %>
               <% is_favorite_home = @championship.favorite_club_id.present? && match.home_club_id == @championship.favorite_club_id %>
               <% is_favorite_away = @championship.favorite_club_id.present? && match.away_club_id == @championship.favorite_club_id %>
               <% prediction = @predictions[match.id] %>
-              <tr style="<%= 'opacity: 0.6;' if is_locked %>">
+              <tr style="<%= 'opacity: 0.6;' if match.finished? %>">
                 <td><%= match.scheduled_at&.strftime("%d/%m %H:%M") %></td>
                 
                 <td>
@@ -146,13 +147,9 @@
                 </td>
                 
                 <td style="text-align: center;">
-                  <% if match.finished? %>
-                    <span style="color: #28a745; font-weight: bold;">Finalizado</span>
-                  <% elsif is_locked %>
-                    <span style="color: #dc3545; font-weight: bold;">Bloqueado</span>
-                  <% else %>
-                    <span style="color: #ffc107; font-weight: bold;">Aberto</span>
-                  <% end %>
+                  <span style="color: <%= match.status_color %>; font-weight: bold;">
+                    <%= match.status_label %>
+                  </span>
                 </td>
                 
                 <% if @round.all_matches_finished? %>
@@ -179,7 +176,7 @@
           </tbody>
         </table>
         
-        <% if @matches.any? { |m| m.can_predict? } %>
+        <% if can_edit_round && @matches.any? { |m| m.can_predict? } %>
           <%= submit_tag "Salvar Previsoes", id: "save-button", class: "btn", style: "margin-top: 20px;", disabled: true %>
         <% else %>
           <p style="text-align: center; color: #999; margin-top: 20px;">Todos os jogos estao bloqueados ou finalizados.</p>

@@ -34,7 +34,7 @@ class ScoreCalculatorService
     @championship.overall_standings.destroy_all
     
     # Recalcular TODOS os jogos finalizados desta rodada
-    @round.matches.finished.each do |match|
+    @round.matches.finished_matches.each do |match|
       next if match == @match # Pular o jogo atual (será calculado depois)
       match.predictions.each do |prediction|
         points = calculate_match_points(match, prediction)
@@ -53,12 +53,12 @@ class ScoreCalculatorService
     # Verificar placar exato
     if prediction.home_score == match.home_score && 
        prediction.away_score == match.away_score
-      points = match.involves_remo? ? 20 : 10
+      points = match.involves_favorite? ? 20 : 10
       exact_score = true
       correct_result = true
     # Verificar resultado correto (V/E/D)
     elsif same_result_for_match?(match, prediction)
-      points = match.involves_remo? ? 10 : 5
+      points = match.involves_favorite? ? 10 : 5
       correct_result = true
     end
     
@@ -96,7 +96,7 @@ class ScoreCalculatorService
     round_score.exact_scores += 1 if score_data[:exact_score]
     round_score.correct_results += 1 if score_data[:correct_result]
     
-    if score_data[:match]&.involves_remo?
+    if score_data[:match]&.involves_favorite?
       round_score.special_exact_scores ||= 0
       round_score.special_correct_results ||= 0
       round_score.special_exact_scores += 1 if score_data[:exact_score]

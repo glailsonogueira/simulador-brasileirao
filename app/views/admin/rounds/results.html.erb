@@ -23,6 +23,9 @@
           <th style="text-align: right;">Mandante</th>
           <th style="text-align: center;">Placar</th>
           <th>Visitante</th>
+          <th style="text-align: center; width: 60px;">
+            <input type="checkbox" id="select-all-finished" title="Selecionar todos finalizados">
+          </th>
           <th style="text-align: center;">Ações</th>
         </tr>
       </thead>
@@ -58,25 +61,22 @@
                 <strong><%= match.away_club.name %></strong>
               </div>
             </td>
+            <!-- Coluna Checkbox -->
+            <td style="text-align: center;">
+              <% if match.finished? %>
+                <input type="checkbox" name="match_ids[]" value="<%= match.id %>" class="finished-checkbox">
+              <% end %>
+            </td>
             <td style="text-align: center;">
               <div style="display: flex; gap: 10px; justify-content: center; align-items: center;">
                 <!-- Botão Finalizar Individual -->
                 <% if !match.finished? %>
-                  <%= button_to finalize_admin_match_path(match), 
-                      method: :post,
-                      params: { 
-                        match: { 
-                          home_score: match.home_score, 
-                          away_score: match.away_score 
-                        } 
-                      },
-                      form: { 
-                        onsubmit: "var homeField = document.getElementById('match_#{match.id}_home'); var awayField = document.getElementById('match_#{match.id}_away'); this.querySelector('input[name=\"match[home_score]\"]').value = homeField.value; this.querySelector('input[name=\"match[away_score]\"]').value = awayField.value; return confirm('Finalizar esta partida?');" 
-                      },
-                      style: "background: none; border: none; padding: 0; cursor: pointer;", 
-                      title: "Finalizar partida" do %>
+                  <button type="button"
+                          onclick="finalizeMatch(<%= match.id %>)"
+                          style="background: none; border: none; padding: 0; cursor: pointer;" 
+                          title="Finalizar partida">
                     <%= image_tag 'finish-icon.svg', style: 'width: 32px; height: 32px;' %>
-                  <% end %>
+                  </button>
                 <% else %>
                   <span style="opacity: 0.5;">
                     <%= image_tag 'finish-icon.svg', style: 'width: 32px; height: 32px; filter: grayscale(100%);' %>
@@ -85,13 +85,12 @@
                 
                 <!-- Botão Reabrir -->
                 <% if match.finished? %>
-                  <%= button_to reopen_admin_match_path(match), 
-                      method: :post,
-                      form: { onsubmit: "return confirm('Reabrir esta partida para edição?');" },
-                      style: "background: none; border: none; padding: 0; cursor: pointer;", 
-                      title: "Reabrir para edição" do %>
+                  <button type="button"
+                          onclick="reopenMatch(<%= match.id %>)"
+                          style="background: none; border: none; padding: 0; cursor: pointer;" 
+                          title="Reabrir para edição">
                     <%= image_tag 'reload-icon.svg', style: 'width: 32px; height: 32px;' %>
-                  <% end %>
+                  </button>
                 <% else %>
                   <span style="opacity: 0.5;">
                     <%= image_tag 'reload-icon.svg', style: 'width: 32px; height: 32px; filter: grayscale(100%);' %>
@@ -105,23 +104,130 @@
     </table>
     
     <div style="text-align: center; margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-      <!-- Botão Finalizar Todas as Abertas -->
+      <!-- Botão Finalizar Jogos -->
       <% if @matches.any? { |m| !m.finished? } %>
-        <%= submit_tag "Finalizar Todas Abertas", 
+        <%= submit_tag "Finalizar Jogos", 
             class: "btn", 
             style: "background: #28a745; padding: 12px 40px; font-size: 16px;", 
-            data: { confirm: 'Finalizar todas as partidas abertas?' } %>
+            data: { confirm: 'Finalizar os jogos com placares preenchidos?' } %>
       <% end %>
-    <% end %>
     
-    <!-- Botão Reabrir Todas as Fechadas -->
-    <% if @matches.any?(&:finished?) %>
-      <%= button_to "Reabrir Todas Fechadas", 
-          reopen_all_admin_round_path(@round), 
-          method: :post, 
-          class: "btn", 
-          style: "background: #ff9800; padding: 12px 40px; font-size: 16px;",
-          data: { confirm: 'Reabrir todas as partidas finalizadas?' } %>
-    <% end %>
-  </div>
+      <!-- Botão Reabrir Jogos -->
+      <% if @matches.any?(&:finished?) %>
+        <%= button_tag "Reabrir Jogos", 
+            type: "button",
+            class: "btn", 
+            style: "background: #ff9800; padding: 12px 40px; font-size: 16px;",
+            onclick: "submitReopenForm()" %>
+      <% end %>
+    </div>
+  <% end %>
 </div>
+
+<script>
+// Selecionar/desselecionar todos os jogos finalizados
+document.getElementById('select-all-finished')?.addEventListener('change', function() {
+  const checkboxes = document.querySelectorAll('.finished-checkbox');
+  checkboxes.forEach(cb => cb.checked = this.checked);
+});
+
+// Função para reabrir jogos selecionados
+function submitReopenForm() {
+  const checkedBoxes = document.querySelectorAll('.finished-checkbox:checked');
+  
+  if (checkedBoxes.length === 0) {
+    alert('Selecione pelo menos um jogo finalizado para reabrir!');
+    return false;
+  }
+  
+  if (!confirm('Reabrir os ' + checkedBoxes.length + ' jogo(s) selecionado(s)?')) {
+    return false;
+  }
+  
+  // Criar formulário do zero (igual às funções individuais)
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = '<%= reopen_all_admin_round_path(@round) %>';
+  
+  // Adicionar token CSRF
+  const token = document.querySelector('meta[name="csrf-token"]').content;
+  const tokenInput = document.createElement('input');
+  tokenInput.type = 'hidden';
+  tokenInput.name = 'authenticity_token';
+  tokenInput.value = token;
+  form.appendChild(tokenInput);
+  
+  // Adicionar os IDs dos jogos selecionados
+  checkedBoxes.forEach(function(checkbox) {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'match_ids[]';
+    input.value = checkbox.value;
+    form.appendChild(input);
+  });
+  
+  document.body.appendChild(form);
+  form.submit();
+}
+// Finalizar jogo individual
+  function finalizeMatch(matchId) {
+    const homeField = document.getElementById('match_' + matchId + '_home');
+    const awayField = document.getElementById('match_' + matchId + '_away');
+    
+    if (!homeField.value || !awayField.value) {
+      alert('Preencha os placares antes de finalizar!');
+      return;
+    }
+    
+    if (!confirm('Finalizar esta partida?')) {
+      return;
+    }
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/admin/matches/' + matchId + '/finalize';
+    
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+    const tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = 'authenticity_token';
+    tokenInput.value = token;
+    form.appendChild(tokenInput);
+    
+    const homeInput = document.createElement('input');
+    homeInput.type = 'hidden';
+    homeInput.name = 'match[home_score]';
+    homeInput.value = homeField.value;
+    form.appendChild(homeInput);
+    
+    const awayInput = document.createElement('input');
+    awayInput.type = 'hidden';
+    awayInput.name = 'match[away_score]';
+    awayInput.value = awayField.value;
+    form.appendChild(awayInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+  
+  // Reabrir jogo individual
+  function reopenMatch(matchId) {
+    if (!confirm('Reabrir esta partida para edição?')) {
+      return;
+    }
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/admin/matches/' + matchId + '/reopen';
+    
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+    const tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = 'authenticity_token';
+    tokenInput.value = token;
+    form.appendChild(tokenInput);
+    
+    document.body.appendChild(form);
+    form.submit();
+  }
+</script>

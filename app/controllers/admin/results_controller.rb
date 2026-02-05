@@ -22,9 +22,9 @@ class Admin::ResultsController < ApplicationController
   end
   
   def recalculate
-    @round.matches.where(finished: true).each do |match|
-      ScoreCalculatorService.new(match).calculate
-    end
+    # Usar o método correto que calcula a rodada inteira UMA VEZ
+    RoundScore.calculate_for_round(@round)
+    OverallStanding.calculate_for_championship(@round.championship)
     
     redirect_to admin_round_results_path(@round), notice: 'Pontuações recalculadas com sucesso!'
   end

@@ -24,7 +24,10 @@ class Admin::MatchesController < ApplicationController
     @round = @match.round
     
     if @match.update(match_finalize_params.merge(finished: true))
-      redirect_to results_admin_round_path(@round), notice: 'Partida finalizada com sucesso!'
+      # Recalcular rankings usando o serviço correto
+      ScoreCalculatorService.new(@match).calculate
+      
+      redirect_to results_admin_round_path(@round), notice: 'Partida finalizada e rankings recalculados com sucesso!'
     else
       redirect_to results_admin_round_path(@round), alert: 'Erro ao finalizar partida.'
     end
