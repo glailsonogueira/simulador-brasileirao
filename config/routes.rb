@@ -8,6 +8,19 @@ Rails.application.routes.draw do
   get 'signup', to: 'users#new'
   post 'signup', to: 'users#create'
   
+  # Rotas de reset de senha
+  resources :password_resets, only: [:new, :create], param: :token do
+    member do
+      get :edit
+      patch :update
+    end
+  end
+
+  # Rotas de conta do usuário
+  namespace :account do
+    resource :password, only: [:edit, :update], controller: 'passwords'
+  end
+
   get '/auth/google_oauth2/callback', to: 'omniauth_callbacks#google_oauth2'
   get '/auth/failure', to: 'omniauth_callbacks#failure'
   post '/auth/google_oauth2', to: 'omniauth_callbacks#google_oauth2'
@@ -44,6 +57,7 @@ Rails.application.routes.draw do
       member do
         patch :toggle_admin
         patch :toggle_active
+        patch :force_password_change
       end
     end
     

@@ -6,7 +6,7 @@ class User < ApplicationRecord
   
   validates :email, presence: true, uniqueness: true
   validates :name, presence: true
-  validates :password, presence: true, length: { minimum: 6 }, if: :password_required?
+  validates :password, length: { minimum: 6 }, allow_blank: true
   
   scope :active_users, -> { where(active: true) }
   scope :inactive_users, -> { where(active: false) }
@@ -24,7 +24,6 @@ class User < ApplicationRecord
   def active_for_authentication?
     active
   end
-  
   # ===== MÉTODOS PARA RESET DE SENHA =====
   
   # Gera token de reset de senha
@@ -44,17 +43,12 @@ class User < ApplicationRecord
     self.password = new_password
     self.reset_password_token = nil
     self.reset_password_sent_at = nil
+    self.force_password_change = false
     save
   end
   
   # Busca usuário por token de reset
   def self.find_by_password_reset_token(token)
     find_by(reset_password_token: token)
-  end
-  
-  private
-  
-  def password_required?
-    provider.blank? && (new_record? || password.present?)
   end
 end

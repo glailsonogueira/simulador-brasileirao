@@ -12,14 +12,14 @@
   <table>
     <thead>
       <tr>
-        <th>Avatar</th>
+        <th style="text-align: center;">Avatar</th>
         <th>Nome</th>
         <th>Email</th>
         <th>Tipo de Login</th>
         <th>Status</th>
         <th>Admin</th>
         <th>Cadastro</th>
-        <th>Ações</th>
+        <th style="text-align: center;">Ações</th>
       </tr>
     </thead>
     <tbody>
@@ -65,7 +65,7 @@
                   data: { confirm: "#{user.active? ? 'Desativar' : 'Ativar'} #{user.name}?" },
                   style: "background: transparent; border: none; cursor: pointer; padding: 5px; display: inline-flex;",
                   title: user.active? ? "Desativar" : "Ativar" do %>
-                <span style="font-size: 24px;"><%= user.active? ? '🔒' : '🔓' %></span>
+                <span style="font-size: 24px;"><%= image_tag(user.active? ? 'block-user.svg' : 'active-user.svg', style: 'width: 32px; height: 32px;') %></span>
               <% end %>
               
               <%= button_to toggle_admin_admin_user_path(user), 
@@ -73,7 +73,15 @@
                   data: { confirm: "#{user.admin? ? 'Remover admin de' : 'Tornar admin'} #{user.name}?" },
                   style: "background: transparent; border: none; cursor: pointer; padding: 5px; display: inline-flex;",
                   title: user.admin? ? "Remover Admin" : "Tornar Admin" do %>
-                <span style="font-size: 24px;"><%= user.admin? ? '👤' : '⭐' %></span>
+                <span style="font-size: 24px;"><%= image_tag(user.admin? ? 'user.png' : 'user-admin.png', style: 'width: 32px; height: 32px;') %></span>
+              <% end %>
+              
+              <%= button_to force_password_change_admin_user_path(user), 
+                  method: :patch,
+                  data: { confirm: "#{user.force_password_change? ? 'Remover obrigação de' : 'Forçar'} troca de senha para #{user.name}?" },
+                  style: "background: transparent; border: none; cursor: pointer; padding: 5px; display: inline-flex;",
+                  title: user.force_password_change? ? "Não forçar troca de senha" : "Forçar troca de senha" do %>
+                <span style="font-size: 24px;"><%= image_tag(user.force_password_change? ? 'key.svg' : 'change-pwd.svg', style: 'width: 32px; height: 32px;') %></span>
               <% end %>
             </div>
           </td>

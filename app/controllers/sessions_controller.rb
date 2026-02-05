@@ -10,7 +10,13 @@ class SessionsController < ApplicationController
     if user && user.authenticate(params[:password])
       if user.active?
         session[:user_id] = user.id
-        redirect_to root_path, notice: 'Login realizado com sucesso!'
+        
+        # Verificar se precisa forçar alteração de senha
+        if user.force_password_change?
+          redirect_to edit_account_password_path, alert: 'Por favor, altere sua senha antes de continuar.'
+        else
+          redirect_to root_path, notice: 'Login realizado com sucesso!'
+        end
       else
         flash.now[:alert] = 'Sua conta está desativada. Entre em contato com o administrador.'
         render :new, status: :unprocessable_entity

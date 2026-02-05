@@ -12,8 +12,7 @@ class PasswordResetsController < ApplicationController
     if @user
       @user.generate_password_reset_token
       PasswordResetMailer.reset_email(@user).deliver_now
-      flash[:notice] = "Instruções para redefinir sua senha foram enviadas para #{params[:email]}"
-      redirect_to login_path
+      redirect_to login_path, notice: "Instruções para redefinir sua senha foram enviadas para #{params[:email]}"
     else
       flash.now[:alert] = "Email não encontrado"
       render :new, status: :unprocessable_entity
@@ -25,8 +24,7 @@ class PasswordResetsController < ApplicationController
     @user = User.find_by_password_reset_token(params[:token])
     
     unless @user && @user.password_reset_token_valid?
-      flash[:alert] = "Link de redefinição de senha inválido ou expirado"
-      redirect_to new_password_reset_path
+      redirect_to new_password_reset_path, alert: "Link de redefinição de senha inválido ou expirado"
     end
   end
   
@@ -35,8 +33,7 @@ class PasswordResetsController < ApplicationController
     @user = User.find_by_password_reset_token(params[:token])
     
     unless @user && @user.password_reset_token_valid?
-      flash[:alert] = "Link de redefinição de senha inválido ou expirado"
-      redirect_to new_password_reset_path
+      redirect_to new_password_reset_path, alert: "Link de redefinição de senha inválido ou expirado"
       return
     end
     
@@ -53,8 +50,7 @@ class PasswordResetsController < ApplicationController
     end
     
     if @user.reset_password(params[:user][:password])
-      flash[:notice] = "Senha redefinida com sucesso!"
-      redirect_to login_path
+      redirect_to login_path, notice: "Senha redefinida com sucesso!"
     else
       flash.now[:alert] = @user.errors.full_messages.join(", ")
       render :edit, status: :unprocessable_entity

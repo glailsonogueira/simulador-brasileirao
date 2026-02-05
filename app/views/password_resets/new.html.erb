@@ -1,0 +1,25 @@
+<% content_for :title, "Esqueci minha senha" %>
+
+<div class="card" style="max-width: 500px; margin: 50px auto;">
+  <h1 style="margin-bottom: 20px;"> Esqueci minha senha</h1>
+  
+  <p style="color: #666; margin-bottom: 25px;">
+    Digite seu email cadastrado. Enviaremos instruções para redefinir sua senha.
+  </p>
+  
+  <%= form_with url: password_resets_path, method: :post, local: true do |f| %>
+    <div style="margin-bottom: 15px;">
+      <%= f.label :email, "Email:" %><br>
+      <%= f.email_field :email, required: true, autofocus: true, 
+          style: "width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px;" %>
+    </div>
+    
+    <%= f.submit "Enviar instruções", class: "btn", style: "width: 100%; margin-bottom: 15px;" %>
+  <% end %>
+  
+  <hr style="margin: 20px 0;">
+  
+  <p style="text-align: center; margin-top: 20px;">
+    <%= link_to "← Voltar para login", login_path %>
+  </p>
+</div>

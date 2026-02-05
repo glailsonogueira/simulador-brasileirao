@@ -1,6 +1,6 @@
 class Admin::UsersController < ApplicationController
   before_action :require_admin
-  before_action :set_user, only: [:show, :toggle_admin, :toggle_active]
+  before_action :set_user, only: [:show, :toggle_admin, :toggle_active, :force_password_change]
   
   def index
     @users = User.order(:name)
@@ -17,6 +17,12 @@ class Admin::UsersController < ApplicationController
   def toggle_active
     @user.update(active: !@user.active?)
     redirect_to admin_users_path, notice: "#{@user.name} foi #{@user.active? ? 'ativado' : 'desativado'}!"
+  end
+
+  def force_password_change
+    @user.update(force_password_change: !@user.force_password_change?)
+    status = @user.force_password_change? ? 'deverá alterar a senha no próximo login' : 'não precisa mais alterar a senha'
+    redirect_to admin_users_path, notice: "#{@user.name} #{status}!"
   end
   
   private
