@@ -1,0 +1,104 @@
+<% content_for :title, "Clubes - #{@championship.full_name}" %>
+<%= breadcrumb [t("navigation.home"), root_path], ["Admin", admin_championships_path], [t("navigation.championships"), admin_championships_path], [@championship.full_name, admin_championship_path(@championship)], "Clubes Participantes" %>
+
+<div style="text-align: center; margin-bottom: 30px;">
+  <h1 style="color: #000080;"> Clubes Participantes</h1>
+  <p style="font-size: 18px; color: #666; margin-top: 10px;">
+    <strong><%= @championship.full_name %></strong>
+  </p>
+  <div style="margin-top: 15px;">
+    <%= link_to t("actions.back_to_championship"), admin_championship_path(@championship), class: "btn" %>
+  </div>
+</div>
+
+<!-- ADICIONAR CLUBE -->
+<% unless @championship.complete? %>
+  <div class="card" style="margin-bottom: 30px;">
+    <h2 style="text-align: center; margin-bottom: 20px;">➕ Adicionar Clube</h2>
+    
+    <% if @available_clubs.any? %>
+      <%= form_with url: add_club_admin_championship_path(@championship), method: :post, local: true, style: "display: flex; gap: 10px; justify-content: center; align-items: center;" do |f| %>
+        <%= select_tag :club_id, 
+            options_from_collection_for_select(@available_clubs, :id, :name), 
+            prompt: "Selecione um clube...",
+            style: "padding: 10px; font-size: 16px; min-width: 300px;" %>
+        <%= submit_tag t("actions.add_to_championship"), class: "btn", style: "background: #28a745;" %>
+      <% end %>
+    <% else %>
+      <p style="text-align: center; color: #666;">
+        <%= @championship.complete? ? "✅ Todos os 20 clubes já foram adicionados!" : "Nenhum clube disponível para adicionar." %>
+      </p>
+    <% end %>
+  </div>
+<% end %>
+
+<!-- LISTA DE CLUBES (4 por linha) -->
+<div class="card">
+  <h2 style="text-align: center; margin-bottom: 20px;">
+    Clubes Cadastrados (<%= @championship.clubs.count %>/20)
+  </h2>
+  
+  <% if @championship_clubs.any? %>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+      <% @championship_clubs.each do |championship_club| %>
+        <% club = championship_club.club %>
+        <div class="card" style="background: #f8f9fa; padding: 20px; text-align: center;">
+          <!-- Badge do Clube -->
+          <% if club.badge_url %>
+            <%= image_tag club.badge_url, style: "width: 60px; height: 60px; object-fit: contain; margin-bottom: 15px;" %>
+          <% else %>
+            <div style="width: 60px; height: 60px; background: <%= club.primary_color || '#ccc' %>; border-radius: 50%; margin: 0 auto 15px;"></div>
+          <% end %>
+          
+          <!-- Nome do Clube -->
+          <h3 style="color: #000080; margin-bottom: 5px; font-size: 16px;">
+            <%= club.name %>
+          </h3>
+          <p style="color: #666; font-size: 14px; margin-bottom: 15px;">
+            <%= club.abbreviation %>
+          </p>
+          
+          <!-- Ações -->
+          <div style="display: flex; gap: 10px; justify-content: center;">
+            <%= link_to edit_admin_club_path(club), style: "text-decoration: none;", title: t("actions.edit") do %>
+              <%= image_tag 'edit-icon.svg', style: 'filter: brightness(0.5) sepia(1) hue-rotate(90deg) saturate(5); width: 28px; height: 28px;' %>
+            <% end %>
+            <%= button_to admin_championship_remove_club_path(@championship, club_id: club.id), 
+                method: :delete, 
+                data: { confirm: "Remover #{club.name} do campeonato?" }, 
+                style: "background: transparent; border: none; cursor: pointer; padding: 0;", 
+                title: t("actions.remove") do %>
+              <%= image_tag 'bin-icon.svg', style: 'filter: brightness(0.5) sepia(1) hue-rotate(-50deg) saturate(5); width: 28px; height: 28px;' %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p style="text-align: center; color: #999; padding: 40px;">
+      Nenhum clube cadastrado ainda.
+    </p>
+  <% end %>
+</div>
+
+<!-- Responsividade -->
+<style>
+  @media (max-width: 1200px) {
+    div[style*="grid-template-columns: repeat(4, 1fr)"] {
+      grid-template-columns: repeat(3, 1fr) !important;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    div[style*="grid-template-columns: repeat(4, 1fr)"],
+    div[style*="grid-template-columns: repeat(3, 1fr)"] {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    div[style*="grid-template-columns"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>

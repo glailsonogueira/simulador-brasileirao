@@ -1,131 +1,71 @@
 <% content_for :title, @championship.full_name %>
-<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], @championship.full_name %>
+<%= breadcrumb [t("navigation.home"), root_path], ["Admin", admin_championships_path], [t("navigation.championships"), admin_championships_path], @championship.full_name %>
 
+<!-- CABEÇALHO COM INFORMAÇÕES DO CAMPEONATO -->
 <div style="text-align: center; margin-bottom: 30px;">
-  <h1 style="color: #000080; margin-bottom: 10px;"><%= @championship.full_name %></h1>
-  <div>
-    <%= link_to "Voltar", admin_championships_path, class: "btn", style: "margin: 0 5px;" %>
-    <%= link_to "Editar", edit_admin_championship_path(@championship), class: "btn", style: "margin: 0 5px;" %>
-  </div>
-</div>
-
-<div class="card">
-  <h2 style="text-align: center; margin-bottom: 20px;">Informacoes do Campeonato</h2>
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center;">
-    <div>
-      <p style="color: #666; font-size: 14px;">Ano</p>
-      <p style="font-size: 24px; font-weight: bold; color: #000080;"><%= @championship.year %></p>
-    </div>
-    <div>
-      <p style="color: #666; font-size: 14px;">Status</p>
-      <p style="font-size: 24px; font-weight: bold; color: <%= @championship.active? ? '#28a745' : '#dc3545' %>;">
-        <%= @championship.active? ? "Ativo" : "Inativo" %>
-      </p>
-    </div>
-    <div>
-      <p style="color: #666; font-size: 14px;">Rodadas</p>
-      <p style="font-size: 24px; font-weight: bold; color: #000080;"><%= @championship.rounds.count %></p>
-    </div>
-  </div>
-  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; text-align: center; margin-top: 20px;">
-    <div>
-      <p style="color: #666; font-size: 14px;">Data Inicio</p>
-      <p style="font-size: 18px; font-weight: bold;"><%= @championship.start_date&.strftime("%d/%m/%Y") %></p>
-    </div>
-    <div>
-      <p style="color: #666; font-size: 14px;">Data Fim</p>
-      <p style="font-size: 18px; font-weight: bold;"><%= @championship.end_date&.strftime("%d/%m/%Y") %></p>
-    </div>
-  </div>
-  <% if @championship.favorite_club.present? %>
-    <div style="text-align: center; margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 5px;">
-      <p style="color: #856404; font-weight: bold;">
-        Clube Favorito (Pontuacao Dobrada): <%= @championship.favorite_club.name %> &#9733;
-      </p>
-    </div>
-  <% end %>
-</div>
-
-<div class="card">
-  <h2 style="text-align: center; margin-bottom: 20px;">
-    Clubes Participantes (<%= @championship.clubs_count %>/20)
-  </h2>
+  <h1 style="color: #000080;"><%= @championship.full_name %></h1>
+  <p style="font-size: 18px; color: #666; margin-top: 10px;">
+    <strong>Ano:</strong> <%= @championship.year %> | 
+    <strong>Período:</strong> <%= @championship.start_date&.strftime("%d/%m/%Y") %> a <%= @championship.end_date&.strftime("%d/%m/%Y") %>
+    <% if @championship.favorite_club %>
+      | <strong>Time Favorito:</strong> <%= @championship.favorite_club.name %> ⭐
+    <% end %>
+  </p>
   
-  <% if @championship.can_add_club? %>
-    <div style="text-align: center; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 5px;">
-      <%= form_with url: add_club_admin_championship_path(@championship), method: :post, local: true, style: "display: inline-flex; gap: 10px; align-items: center;" do |f| %>
-        <%= select_tag :club_id, options_from_collection_for_select(Club.where.not(id: @championship.clubs.pluck(:id)).ordered, :id, :name), prompt: "Selecione um clube", style: "padding: 10px; border: 1px solid #ddd; border-radius: 5px;" %>
-        <%= f.submit "Adicionar Clube", class: "btn" %>
-      <% end %>
-    </div>
-  <% end %>
-  
-  <% if @championship.clubs.any? %>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-      <% @championship.clubs.ordered.each do |club| %>
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; border: 1px solid #ddd; border-radius: 5px; background: white;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <% if club.badge_url %>
-              <%= image_tag club.badge_url, style: "width: 30px; height: 30px; object-fit: contain;" %>
-            <% else %>
-              <div style="width: 30px; height: 30px; background: <%= club.primary_color || '#ccc' %>; border-radius: 3px;"></div>
-            <% end %>
-            <div>
-              <strong><%= club.name %></strong>
-              <span style="color: #666; font-size: 12px;">(<%= club.abbreviation %>)</span>
-              <% if club.special_club? %>
-                <span style="color: #ffc107; font-size: 16px;">&#9733;</span>
-              <% end %>
-            </div>
-          </div>
-          <div style="display: flex; gap: 5px;">
-            <%= link_to edit_admin_club_path(club), style: "text-decoration: none;", title: "Editar" do %>
-              <%= image_tag 'edit-icon.svg', style: 'filter: brightness(0.5) sepia(1) hue-rotate(90deg) saturate(5); width: 32px; height: 32px;' %>
-            <% end %>
-            <%= button_to remove_club_admin_championship_path(@championship, club_id: club.id), method: :delete, data: { confirm: "Remover #{club.name}?" }, style: "background: transparent; border: none; cursor: pointer; padding: 0;", title: "Remover" do %>
-              <%= image_tag 'bin-icon.svg', style: 'filter: brightness(0.5) sepia(1) hue-rotate(-50deg) saturate(5); width: 32px; height: 32px;' %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  <% else %>
-    <p style="text-align: center; color: #666;">Nenhum clube adicionado ainda.</p>
-  <% end %>
-  
-  <% if @championship.complete? && @championship.rounds.count == 0 %>
-    <div style="text-align: center; margin-top: 30px;">
-      <%= button_to "Gerar 38 Rodadas", generate_rounds_admin_championship_path(@championship), method: :post, class: "btn", style: "background: #28a745; font-size: 16px; padding: 15px 30px;", data: { confirm: "Gerar 38 rodadas agora?" } %>
-    </div>
-  <% end %>
-</div>
-
-<% if @championship.rounds.any? %>
-  <div class="card">
-    <h2 style="text-align: center; margin-bottom: 20px;">Rodadas (<%= @championship.rounds.count %>)</h2>
+  <!-- Botões de Ação -->
+  <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+    <%= link_to t("actions.back"), admin_championships_path, class: "btn" %>
+    <%= link_to "✏️ t("actions.edit")", edit_admin_championship_path(@championship), class: "btn", style: "background: #007bff;" %>
     
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
-      <% @championship.rounds.order(:number).each do |round| %>
-        <div class="card" style="background: #f8f9fa; text-align: center; padding: 20px;">
-          <h3 style="color: #000080; margin-bottom: 15px; font-size: 20px;">
-            Rodada <%= round.number %>
-          </h3>
-          
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            <%= link_to "Partidas", matches_admin_round_path(round), class: "btn", style: "width: 100%;" %>
-            <%= link_to "Resultados", results_admin_round_path(round), class: "btn", style: "width: 100%; background: #28a745;" %>
-          </div>
-          
-          <div style="margin-top: 15px; font-size: 12px; color: #666;">
-            <% matches_count = round.matches.count %>
-            <% finished_count = round.matches.where(finished: true).count %>
-            <p><%= matches_count %> partida(s)</p>
-            <% if finished_count > 0 %>
-              <p style="color: #28a745;"><%= finished_count %> finalizada(s)</p>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    </div>
+    <% unless @championship.active? %>
+      <%= button_to t("actions.activate"), activate_admin_championship_path(@championship), method: :patch, class: "btn", style: "background: #28a745;" %>
+    <% end %>
+    
+    <% unless @championship.complete? %>
+      <%= button_to "🗑️ Excluir", admin_championship_path(@championship), method: :delete, data: { confirm: t("confirmations.are_you_sure") }, class: "btn", style: "background: #dc3545;" %>
+    <% end %>
   </div>
-<% end %>
+</div>
+
+<!-- DASHBOARD COM 2 CARDS GRANDES -->
+<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">
+  
+  <!-- CARD 1: CLUBES PARTICIPANTES -->
+  <%= link_to admin_championship_clubs_path(@championship), style: "text-decoration: none;" do %>
+    <div class="card" style="padding: 30px; text-align: center; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; min-height: 250px; display: flex; flex-direction: column; justify-content: center;">
+    <div style="font-size: 60px; margin-bottom: 15px;">🏆</div>
+    <h2 style="color: #000080; margin-bottom: 10px; font-size: 22px;">Clubes Participantes</h2>
+      <p style="color: #666; font-size: 18px; margin-bottom: 10px;">
+        <strong style="font-size: 24px; color: #000080;"><%= @championship.clubs.count %>/20</strong> clubes cadastrados
+      </p>
+      <p style="color: #999; font-size: 14px;">Clique para gerenciar clubes</p>
+    </div>
+  <% end %>
+  
+  <!-- CARD 2: JOGOS E RESULTADOS -->
+  <%= link_to admin_championship_matches_path(@championship), style: "text-decoration: none;" do %>
+    <div class="card" style="padding: 30px; text-align: center; transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; min-height: 180px; display: flex; flex-direction: column; justify-content: center;">
+      <div style="font-size: 60px; margin-bottom: 15px;">⚽</div>
+      <h2 style="color: #000080; margin-bottom: 10px; font-size: 22px;">Jogos e Resultados</h2>
+      <p style="color: #666; font-size: 18px; margin-bottom: 10px;">
+        <strong style="font-size: 24px; color: #000080;"><%= @championship.rounds.count %></strong> rodadas | <font style="color: #666; font-size: 16px";><%= Match.joins(:round).where(rounds: { championship_id: @championship.id }).count %> jogos cadastrados</font>
+      </p>
+      <p style="color: #999; font-size: 14px;">Clique para gerenciar rodadas e jogos</p>
+    </div>
+  <% end %>
+  
+</div>
+
+<!-- CSS para hover nos cards -->
+<style>
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  @media (max-width: 768px) {
+    div[style*="grid-template-columns: repeat(2, 1fr)"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>

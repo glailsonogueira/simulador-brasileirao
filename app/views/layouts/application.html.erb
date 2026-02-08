@@ -98,20 +98,20 @@
         </div>
         <div style="display: flex; align-items: center;">
           <% if logged_in? %>
-            <%= link_to root_path, title: "Inicio", style: "font-size: 28px; text-decoration: none; margin: 0 10px;" do %>
+            <%= link_to root_path, title: t("navigation.home"), style: "font-size: 28px; text-decoration: none; margin: 0 10px;" do %>
               <%= image_tag 'home-icon.svg', style: 'width: 36px; height: 36px;' %>
             <% end %>
             
-            <%= link_to "Previsoes", predictions_path %>
-            <%= link_to "Rankings", rankings_path %>
+            <%= link_to t("navigation.predictions"), predictions_path %>
+            <%= link_to t("navigation.rankings"), rankings_path %>
             
             <% if current_user.admin? %>
               <div class="dropdown">
                 <span class="dropdown-toggle">Admin <span style="color: white;">&#8595;</span></span>
                 <div class="dropdown-menu">
-                  <%= link_to "Campeonatos", admin_championships_path %>
-                  <%= link_to "Clubes", admin_clubs_path %>
-                  <%= link_to "Usuarios", admin_users_path %>
+                  <%= link_to t("navigation.championships"), admin_championships_path %>
+                  <%= link_to t("navigation.clubs"), admin_clubs_path %>
+                  <%= link_to t("navigation.users"), admin_users_path %>
                 </div>
               </div>
             <% end %>
@@ -130,8 +130,8 @@
               </div>
             </div>
           <% else %>
-            <%= link_to "Login", login_path %>
-            <%= link_to "Cadastro", signup_path %>
+            <%= link_to t("auth.login"), login_path %>
+            <%= link_to t("auth.sign_up_title"), signup_path %>
           <% end %>
         </div>
       </div>

@@ -1,10 +1,14 @@
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
-  
+  before_action :set_locale
   before_action :require_login
   helper_method :current_user, :logged_in?, :current_championship
   
   private
+  
+  def set_locale
+    I18n.locale = :'pt-BR'
+  end
   
   def current_user
     @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]

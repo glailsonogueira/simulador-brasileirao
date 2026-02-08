@@ -1,4 +1,4 @@
-<% content_for :title, "Esqueci minha senha" %>
+<% content_for :title, t("auth.forgot_password") %>
 
 <div class="card" style="max-width: 500px; margin: 50px auto;">
   <h1 style="margin-bottom: 20px;"> Esqueci minha senha</h1>
@@ -20,6 +20,6 @@
   <hr style="margin: 20px 0;">
   
   <p style="text-align: center; margin-top: 20px;">
-    <%= link_to "← Voltar para login", login_path %>
+    <%= link_to t("actions.back_to_login"), login_path %>
   </p>
 </div>

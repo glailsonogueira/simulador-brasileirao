@@ -1,4 +1,4 @@
-<% content_for :title, "Login" %>
+<% content_for :title, t("auth.login") %>
 
 <div class="card" style="max-width: 500px; margin: 50px auto;">
   <h1 style="margin-bottom: 20px;">Login</h1>
@@ -13,7 +13,7 @@
     </div>
     <!-- Link Esqueci minha senha -->
     <div style="text-align: right; margin-bottom: 15px;">
-      <%= link_to "Esqueci minha senha", new_password_reset_path, style: "font-size: 14px; color: #007bff;" %>
+      <%= link_to t("auth.forgot_password"), new_password_reset_path, style: "font-size: 14px; color: #007bff;" %>
     </div>
     <%= f.submit "Entrar", class: "btn", style: "width: 100%; margin-bottom: 15px;" %>
   <% end %>
@@ -35,6 +35,6 @@
   </div>
   
   <p style="margin-top: 20px; text-align: center;">
-    Não tem conta? <%= link_to "Cadastre-se", signup_path %>
+    Não tem conta? <%= link_to t("auth.sign_up"), signup_path %>
   </p>
 </div>

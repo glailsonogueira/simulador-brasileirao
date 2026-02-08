@@ -1,11 +1,11 @@
-<% content_for :title, "Clubes" %>
-<%= breadcrumb ["Início", root_path], ["Admin", admin_championships_path], "Clubes" %>
+<% content_for :title, t("navigation.clubs") %>
+<%= breadcrumb ["Início", root_path], ["Admin", admin_championships_path], t("navigation.clubs") %>
 
 <div style="text-align: center; margin-bottom: 30px;">
   <h1 style="color: #000080;">Clubes</h1>
   <div>
-    <%= link_to "← Voltar", root_path, class: "btn", style: "margin: 0 5px;" %>
-    <%= link_to "+ Novo Clube", new_admin_club_path, class: "btn", style: "margin: 0 5px; background: #28a745;" %>
+    <%= link_to t("actions.back"), root_path, class: "btn", style: "margin: 0 5px;" %>
+    <%= link_to t("actions.new_club"), new_admin_club_path, class: "btn", style: "margin: 0 5px; background: #28a745;" %>
   </div>
 </div>
 
@@ -35,11 +35,11 @@
       </div>
       
       <div style="display: flex; justify-content: center; gap: 10px; margin-top: auto;">
-        <%= link_to edit_admin_club_path(club), style: "background: white; padding: 8px; border-radius: 25px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;", title: "Editar" do %>
+        <%= link_to edit_admin_club_path(club), style: "background: white; padding: 8px; border-radius: 25px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;", title: t("actions.edit") do %>
           <%= image_tag 'edit-icon.svg', style: 'filter: brightness(0.5) sepia(1) hue-rotate(90deg) saturate(5); width: 32px; height: 32px;' %>
         <% end %>
         
-        <%= button_to admin_club_path(club), method: :delete, data: { confirm: "Excluir #{club.name}?" }, style: "background: white; padding: 8px; border-radius: 25px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;", title: "Excluir" do %>
+        <%= button_to admin_club_path(club), method: :delete, data: { confirm: "Excluir #{club.name}?" }, style: "background: white; padding: 8px; border-radius: 25px; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;", title: t("actions.delete") do %>
           <%= image_tag 'bin-icon.svg', style: 'filter: brightness(0.5) sepia(1) hue-rotate(-50deg) saturate(5); width: 32px; height: 32px;' %>
         <% end %>
       </div>

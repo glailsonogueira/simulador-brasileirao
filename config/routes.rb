@@ -44,10 +44,17 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :championships do
       member do
-        post :generate_rounds
-        post :add_club
-        delete :remove_club
+        patch :activate
       end
+      
+      # Rotas de clubes e matches
+      get 'clubs', to: 'championship_clubs#index', as: :clubs
+      get 'matches', to: 'championship_matches#index', as: :matches
+      
+      # Rotas de gerenciamento de clubes
+      post :add_club
+      delete 'remove_club', to: 'championships#remove_club', as: :remove_club
+      post :generate_rounds
     end
     
     resources :clubs

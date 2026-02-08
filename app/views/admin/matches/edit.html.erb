@@ -1,5 +1,5 @@
 <% content_for :title, "Editar Partida" %>
-<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], ["Campeonatos", admin_championships_path], [@championship.full_name, admin_championship_path(@championship)], ["Rodada #{@round.number}", matches_admin_round_path(@round)], "Editar Partida" %>
+<%= breadcrumb [t("navigation.home"), root_path], ["Admin", admin_championships_path], [t("navigation.championships"), admin_championships_path], [@championship.full_name, admin_championship_path(@championship)], ["Rodada #{@round.number}", matches_admin_round_path(@round)], "Editar Partida" %>
 
 <div style="text-align: center; margin-bottom: 30px;">
   <h1 style="color: #000080;">Editar Partida</h1>
@@ -7,7 +7,7 @@
     <strong><%= @match.home_club.name %> x <%= @match.away_club.name %></strong>
   </p>
   <div style="margin-top: 15px;">
-    <%= link_to "Voltar", matches_admin_round_path(@round), class: "btn" %>
+    <%= link_to t("actions.back"), matches_admin_round_path(@round), class: "btn" %>
   </div>
 </div>
 

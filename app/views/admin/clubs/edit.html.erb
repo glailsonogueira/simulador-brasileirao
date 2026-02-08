@@ -1,10 +1,10 @@
 <% content_for :title, "Editar Clube" %>
-<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], ["Clubes", admin_clubs_path], "Editar" %>
+<%= breadcrumb [t("navigation.home"), root_path], ["Admin", admin_championships_path], [t("navigation.clubs"), admin_clubs_path], t("actions.edit") %>
 
 <div style="text-align: center; margin-bottom: 30px;">
   <h1 style="color: #000080;">Editar Clube: <%= @club.name %></h1>
   <div style="margin-top: 15px;">
-    <%= link_to "Voltar", admin_clubs_path, class: "btn", style: "margin: 0 5px;" %>
+    <%= link_to t("actions.back"), admin_clubs_path, class: "btn", style: "margin: 0 5px;" %>
   </div>
 </div>
 

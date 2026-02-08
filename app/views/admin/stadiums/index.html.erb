@@ -1,11 +1,11 @@
 <% content_for :title, "Estadios" %>
-<%= breadcrumb ["Inicio", root_path], ["Admin", admin_championships_path], "Estadios" %>
+<%= breadcrumb [t("navigation.home"), root_path], ["Admin", admin_championships_path], "Estadios" %>
 
 <div style="text-align: center; margin-bottom: 30px;">
   <h1 style="color: #000080;">Estadios</h1>
   <div style="margin-top: 15px;">
-    <%= link_to "Voltar", root_path, class: "btn", style: "margin: 0 5px;" %>
-    <%= link_to "+ Novo Estadio", new_admin_stadium_path, class: "btn", style: "margin: 0 5px; background: #28a745;" %>
+    <%= link_to t("actions.back"), root_path, class: "btn", style: "margin: 0 5px;" %>
+    <%= link_to t("actions.new_stadium"), new_admin_stadium_path, class: "btn", style: "margin: 0 5px; background: #28a745;" %>
   </div>
 </div>
 
@@ -31,11 +31,11 @@
           <td style="text-align: center;"><%= stadium.matches.count %></td>
           <td style="text-align: center;">
             <div style="display: flex; gap: 8px; align-items: center; justify-content: center;">
-              <%= link_to edit_admin_stadium_path(stadium), style: "text-decoration: none; font-size: 24px;", title: "Editar" do %>
+              <%= link_to edit_admin_stadium_path(stadium), style: "text-decoration: none; font-size: 24px;", title: t("actions.edit") do %>
                 &#9998;
               <% end %>
               
-              <%= button_to admin_stadium_path(stadium), method: :delete, data: { confirm: "Excluir #{stadium.name}?" }, style: "background: transparent; border: none; cursor: pointer; padding: 0; font-size: 24px;", title: "Excluir" do %>
+              <%= button_to admin_stadium_path(stadium), method: :delete, data: { confirm: "Excluir #{stadium.name}?" }, style: "background: transparent; border: none; cursor: pointer; padding: 0; font-size: 24px;", title: t("actions.delete") do %>
                 &#128465;
               <% end %>
             </div>

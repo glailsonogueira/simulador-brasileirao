@@ -7,7 +7,7 @@
     <strong><%= @championship.full_name %></strong>
   </p>
   <div style="margin-top: 15px;">
-    <%= link_to "Voltar", championship_predictions_path(championship_id: @championship.id), class: "btn" %>
+    <%= link_to t("actions.back"), championship_predictions_path(championship_id: @championship.id), class: "btn" %>
   </div>
 </div>
 
@@ -177,7 +177,7 @@
         </table>
         
         <% if can_edit_round && @matches.any? { |m| m.can_predict? } %>
-          <%= submit_tag "Salvar Previsoes", id: "save-button", class: "btn", style: "margin-top: 20px;", disabled: true %>
+          <%= submit_tag t("actions.save_predictions"), id: "save-button", class: "btn", style: "margin-top: 20px;", disabled: true %>
         <% else %>
           <p style="text-align: center; color: #999; margin-top: 20px;">Todos os jogos estao bloqueados ou finalizados.</p>
         <% end %>

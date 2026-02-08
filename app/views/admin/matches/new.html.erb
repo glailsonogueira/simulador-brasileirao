@@ -1,6 +1,6 @@
 <h1>Nova Partida - Rodada <%= @round.number %></h1>
 
-<%= link_to "← Voltar", admin_round_matches_path(@round), class: "btn", style: "margin-bottom: 20px;" %>
+<%= link_to t("actions.back"), admin_round_matches_path(@round), class: "btn", style: "margin-bottom: 20px;" %>
 
 <div class="card" style="max-width: 600px;">
   <%= form_with model: @match, url: admin_round_matches_path(@round), method: :post, local: true do |f| %>

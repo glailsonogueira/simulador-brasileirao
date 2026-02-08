@@ -1,7 +1,7 @@
 <h1>Resultados - Rodada <%= @round.number %></h1>
 
-<%= link_to "← Voltar", admin_championship_path(@round.championship), class: "btn", style: "margin-bottom: 20px;" %>
-<%= button_to "Recalcular Pontuações", recalculate_admin_round_results_path(@round), method: :post, class: "btn", style: "margin-bottom: 20px; background: #ffc107;" %>
+<%= link_to t("actions.back"), admin_championship_path(@round.championship), class: "btn", style: "margin-bottom: 20px;" %>
+<%= button_to t("actions.recalculate_scores"), recalculate_admin_round_results_path(@round), method: :post, class: "btn", style: "margin-bottom: 20px; background: #ffc107;" %>
 
 <div class="card">
   <table>
@@ -39,7 +39,7 @@
             <% end %>
           </td>
           <td>
-            <%= link_to "Editar", edit_admin_round_match_path(@round, match), class: "btn", style: "padding: 5px 10px; font-size: 12px;" %>
+            <%= link_to t("actions.edit"), edit_admin_round_match_path(@round, match), class: "btn", style: "padding: 5px 10px; font-size: 12px;" %>
           </td>
         </tr>
       <% end %>

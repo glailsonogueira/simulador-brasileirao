@@ -66,6 +66,18 @@ module Admin
       @championship = Championship.find(params[:championship_id])
       club = Club.find(params[:club_id])
       
+      # Verificar se o clube já participou de algum jogo
+      matches_count = Match.joins(:round)
+                           .where(rounds: { championship_id: @championship.id })
+                           .where("home_club_id = ? OR away_club_id = ?", club.id, club.id)
+                           .count
+      
+      if matches_count > 0
+        redirect_to admin_championship_path(@championship), 
+                    alert: "Não é possível remover #{club.name} pois já possui #{matches_count} partida(s) cadastrada(s) nas rodadas."
+        return
+      end
+      
       @championship.clubs.delete(club)
       redirect_to admin_championship_path(@championship), notice: "#{club.name} removido do campeonato!"
     end

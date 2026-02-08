@@ -1,0 +1,213 @@
+pt-BR:
+  app_name: "Simulador Brasileirão"
+  app_subtitle: "Simulações do Brasileirão by Renegados Azulinos"
+  
+  # Navegação
+  navigation:
+    home: "Inicio"
+    predictions: "Previsões"
+    rankings: "Rankings"
+    admin: "Admin"
+    championships: "Campeonatos"
+    clubs: "Clubes"
+    stadiums: "Estádios"
+    users: "Usuários"
+    logout: "Sair"
+    
+  # Ações comuns
+  actions:
+    back: "Voltar"
+    back_to_championship: "← Voltar ao Campeonato"
+    back_to_login: "← Voltar para login"
+    edit: "Editar"
+    delete: "Excluir"
+    remove: "Remover"
+    save: "Salvar"
+    save_predictions: "Salvar Previsões"
+    cancel: "Cancelar"
+    add: "Adicionar"
+    add_to_championship: "Adicionar ao Campeonato"
+    create: "Criar"
+    update: "Atualizar"
+    activate: "✓ Ativar"
+    view: "Visualizar"
+    new: "Novo"
+    new_championship: "+ Novo Campeonato"
+    new_club: "+ Novo Clube"
+    new_stadium: "+ Novo Estádio"
+    new_match: "Nova Partida"
+    finalize_matches: "Finalizar Jogos"
+    reopen_matches: "Reabrir Jogos"
+    calculate_rankings: "Calcular Rankings"
+    recalculate: "Recalcular"
+    recalculate_scores: "Recalcular Pontuações"
+    generate_38_rounds: "➕ Gerar 38 Rodadas"
+    
+  # Autenticação
+  auth:
+    login: "Login"
+    sign_in: "Faça login"
+    sign_up: "Cadastre-se"
+    sign_up_title: "Cadastro"
+    forgot_password: "Esqueci minha senha"
+    change_password: "Alterar senha"
+    google_login: "Entrar com Google"
+    
+  # Confirmações
+  confirmations:
+    are_you_sure: "Tem certeza?"
+    delete_championship: "Excluir %{name}?"
+    delete_club: "Excluir %{name}?"
+    delete_stadium: "Excluir %{name}?"
+    remove_club: "Remover %{name}?"
+    generate_rounds: "Gerar 38 rodadas vazias?"
+    finalize_matches: "Finalizar os jogos com placares preenchidos?"
+    reopen_matches: "Reabrir jogos selecionados?"
+    
+  # Títulos de páginas
+  titles:
+    edit_championship: "Editar Campeonato"
+    new_championship: "Novo Campeonato"
+    championships: "Campeonatos"
+    clubs_list: "Clubes"
+    clubs_participants: " Clubes Participantes"
+    add_club: "➕ Adicionar Clube"
+    new_club: "Novo Clube"
+    edit_club: "Editar Clube: %{name}"
+    matches_and_results: "⚽ Jogos e Resultados"
+    matches_list: "Partidas - Rodada %{number}"
+    new_match: "Nova Partida - Rodada %{number}"
+    edit_match: "Editar Partida"
+    results: "Resultados - Rodada %{number}"
+    inform_results: "Informar Resultados"
+    edit_stadium: "Editar Estádio: %{name}"
+    summary: "Resumo"
+    statistics: "Estatísticas"
+    
+  # Labels de campos
+  labels:
+    round: "Rodada %{number}"
+    matches: "Partidas"
+    results: "Resultados"
+    clubs_count: "Clubes Cadastrados (%{count}/20)"
+    rounds_count: "Rodadas (%{count}/38)"
+    rounds_total: "Rodadas (%{count})"
+    
+  # Mensagens de sucesso
+  success:
+    championship_activated: "Campeonato %{year} ativado!"
+    club_added: "%{name} adicionado ao campeonato!"
+    club_removed: "%{name} removido do campeonato!"
+    rounds_generated: "38 rodadas criadas com sucesso!"
+    matches_finalized: "%{count} partida(s) finalizada(s) e rankings recalculados com sucesso!"
+    matches_reopened: "%{count} partida(s) reaberta(s) para edição!"
+    password_changed: "Senha alterada com sucesso!"
+    password_reset: "Senha redefinida com sucesso!"
+    password_reset_sent: "Instruções para redefinir sua senha foram enviadas para %{email}"
+    user_status_changed: "%{name} foi %{status}!"
+    user_admin_changed: "%{name} %{status}!"
+    
+  # Mensagens de erro
+  errors:
+    championship_full: "Campeonato já possui 20 clubes!"
+    add_20_clubs_first: "Adicione 20 clubes antes de gerar rodadas!"
+    rounds_already_generated: "Rodadas já foram geradas!"
+    no_matches_finalized: "Nenhuma partida foi finalizada. Verifique se os placares estão preenchidos."
+    select_matches_to_reopen: "Selecione pelo menos um jogo para reabrir!"
+    round_blocked: "Esta rodada está bloqueada. Aguarde a rodada anterior ser finalizada ou que falte menos de 5 dias para o primeiro jogo."
+    cannot_delete_stadium: "Não é possível excluir %{name} pois tem %{count} partida(s) cadastrada(s)."
+    cannot_delete_club_championships: "Não é possível excluir %{name} pois está participando de %{count} campeonato(s)."
+    cannot_delete_club_matches: "Não é possível excluir %{name} pois tem %{count} partida(s) cadastrada(s)."
+    cannot_remove_club: "Não é possível remover %{name} pois já possui %{count} partida(s) cadastrada(s) nas rodadas."
+    invalid_reset_link: "Link de redefinição de senha inválido ou expirado"
+    
+  # Status de usuário
+  user_status:
+    activated: "ativado"
+    deactivated: "desativado"
+    now_admin: "agora é admin"
+    no_longer_admin: "não é mais admin"
+    
+  # Models
+  activerecord:
+    models:
+      user:
+        one: "Usuário"
+        other: "Usuários"
+      championship:
+        one: "Campeonato"
+        other: "Campeonatos"
+      club:
+        one: "Clube"
+        other: "Clubes"
+      match:
+        one: "Partida"
+        other: "Partidas"
+      round:
+        one: "Rodada"
+        other: "Rodadas"
+      stadium:
+        one: "Estádio"
+        other: "Estádios"
+      prediction:
+        one: "Previsão"
+        other: "Previsões"
+        
+    attributes:
+      user:
+        name: "Nome"
+        email: "E-mail"
+        password: "Senha"
+        password_confirmation: "Confirmação de senha"
+        
+      championship:
+        year: "Ano"
+        name: "Nome"
+        start_date: "Data de início"
+        end_date: "Data de término"
+        active: "Ativo"
+        favorite_club: "Clube favorito"
+        
+      club:
+        name: "Nome"
+        abbreviation: "Abreviação"
+        primary_color: "Cor principal"
+        
+      match:
+        scheduled_at: "Data/Hora"
+        home_club: "Mandante"
+        away_club: "Visitante"
+        home_score: "Placar mandante"
+        away_score: "Placar visitante"
+        finished: "Finalizado"
+        stadium: "Estádio"
+        
+      stadium:
+        name: "Nome"
+        city: "Cidade"
+        state: "Estado"
+        capacity: "Capacidade"
+        
+    errors:
+      messages:
+        blank: "não pode ficar em branco"
+        taken: "já está em uso"
+        invalid: "é inválido"
+        
+  # Datas
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%d/%m"
+      long: "%d de %B de %Y"
+      
+    day_names: [Domingo, Segunda-feira, Terça-feira, Quarta-feira, Quinta-feira, Sexta-feira, Sábado]
+    abbr_day_names: [Dom, Seg, Ter, Qua, Qui, Sex, Sáb]
+    
+    month_names: [~, Janeiro, Fevereiro, Março, Abril, Maio, Junho, Julho, Agosto, Setembro, Outubro, Novembro, Dezembro]
+    abbr_month_names: [~, Jan, Fev, Mar, Abr, Mai, Jun, Jul, Ago, Set, Out, Nov, Dez]
+      
+  time:
+    formats:
+      default: "%d/%m/%Y %H:%M"
+      short: "%d/%m %H:%M"
