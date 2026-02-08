@@ -8,11 +8,17 @@ class RoundScore < ApplicationRecord
   scope :winners, -> { where(winner: true) }
   
   def self.calculate_for_round(round)
+    Rails.logger.info "======================================"
+    Rails.logger.info "INICIANDO calculate_for_round para Rodada #{round.number}"
+    Rails.logger.info "======================================"
+    
     # Só calcular se pelo menos 1 jogo foi finalizado
     return unless round.matches.where(finished: true).any?
     
     # Limpar scores anteriores
+    Rails.logger.info "DESTRUINDO #{round.round_scores.count} scores anteriores"
     round.round_scores.destroy_all
+    Rails.logger.info "Scores após destroy: #{round.round_scores.count}"
     
     # Calcular para cada usuário que tem previsões
     User.where(active: true).find_each do |user|

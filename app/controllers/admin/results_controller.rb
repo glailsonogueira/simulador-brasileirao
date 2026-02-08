@@ -8,11 +8,13 @@ class Admin::ResultsController < ApplicationController
   
   def update
     @match = @round.matches.find(params[:id])
+    was_finished = @match.finished? # Guardar estado anterior
     
     if @match.update(match_params)
-      # Recalcular pontuações se o jogo foi finalizado
-      if @match.finished?
-        ScoreCalculatorService.new(@match).calculate
+      # Recalcular APENAS se o jogo ACABOU DE SER finalizado
+      if @match.finished? && !was_finished
+        RoundScore.calculate_for_round(@round)
+        OverallStanding.calculate_for_championship(@round.championship)
       end
       
       redirect_to admin_round_results_path(@round), notice: 'Resultado atualizado com sucesso!'

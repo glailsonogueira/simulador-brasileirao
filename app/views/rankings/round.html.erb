@@ -122,13 +122,9 @@
               </div>
             </td>
             <td style="text-align: center;">
-              <% if match.finished? %>
-                <span style="color: #28a745; font-weight: bold;">Finalizado</span>
-              <% elsif match.locked? %>
-                <span style="color: #dc3545; font-weight: bold;">Em andamento</span>
-              <% else %>
-                <span style="color: #ffc107; font-weight: bold;">Aguardando</span>
-              <% end %>
+              <span style="color: <%= match.status_color %>; font-weight: bold;">
+                <%= match.status_label %>
+              </span>
             </td>
           </tr>
         <% end %>

@@ -24,8 +24,9 @@ class Admin::MatchesController < ApplicationController
     @round = @match.round
     
     if @match.update(match_finalize_params.merge(finished: true))
-      # Recalcular rankings usando o serviço correto
-      ScoreCalculatorService.new(@match).calculate
+      # Recalcular TODA a rodada usando o método correto
+      RoundScore.calculate_for_round(@round)
+      OverallStanding.calculate_for_championship(@round.championship)
       
       redirect_to results_admin_round_path(@round), notice: 'Partida finalizada e rankings recalculados com sucesso!'
     else
