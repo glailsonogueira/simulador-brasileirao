@@ -15,7 +15,9 @@
   <!-- Botões de Ação -->
   <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
     <%= link_to t("actions.back"), admin_championships_path, class: "btn" %>
-    <%= link_to "✏️ t("actions.edit")", edit_admin_championship_path(@championship), class: "btn", style: "background: #007bff;" %>
+    <%= link_to edit_admin_championship_path(@championship), class: "btn", style: "background: #007bff;" do %>
+  ✏️ <%= t('actions.edit') %>
+    <% end %>
     
     <% unless @championship.active? %>
       <%= button_to t("actions.activate"), activate_admin_championship_path(@championship), method: :patch, class: "btn", style: "background: #28a745;" %>
